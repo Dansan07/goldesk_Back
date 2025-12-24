@@ -5,12 +5,12 @@ import com.torneo.goldesk.dto.actores.PersonaBaseDTO;
 public class JugadorCreateDTO extends PersonaBaseDTO {
 
     private String urlFoto;
-    private boolean esDelegado;
+    private Boolean esDelegado;
 
     public JugadorCreateDTO() {
     }
 
-    public JugadorCreateDTO(String cedula, String nombre, String apellidos, String telefono, String email, String urlFoto, boolean esDelegado) {
+    public JugadorCreateDTO(String cedula, String nombre, String apellidos, String telefono, String email, String urlFoto, Boolean esDelegado) {
         super(cedula, nombre, apellidos, telefono, email);
         this.urlFoto = urlFoto;
         this.esDelegado = esDelegado;
@@ -20,7 +20,7 @@ public class JugadorCreateDTO extends PersonaBaseDTO {
         return urlFoto;
     }
 
-    public boolean isEsDelegado() {
+    public Boolean isEsDelegado() {
         return esDelegado;
     }
 }

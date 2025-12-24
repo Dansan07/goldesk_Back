@@ -1,6 +1,6 @@
 package com.torneo.goldesk.dto.actores;
 
-public class PersonaBaseDTO {
+public abstract class PersonaBaseDTO {
 
     protected String cedula;
     protected String nombre;

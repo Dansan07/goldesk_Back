@@ -6,7 +6,7 @@ public class JugadorUpdateDTO extends PersonaBaseDTO {
 
     private Integer idJugador;
     private String urlFoto;
-    private boolean esDelegado;
+    private Boolean esDelegado;
 
 
     public Integer getIdJugador() {
@@ -25,11 +25,11 @@ public class JugadorUpdateDTO extends PersonaBaseDTO {
         this.urlFoto = urlFoto;
     }
 
-    public boolean isEsDelegado() {
+    public Boolean isEsDelegado() {
         return esDelegado;
     }
 
-    public void setEsDelegado(boolean esDelegado) {
+    public void setEsDelegado(Boolean esDelegado) {
         this.esDelegado = esDelegado;
     }
 }

@@ -12,7 +12,7 @@ public class Jugador {
     private Integer idJugador;
 
     @Column(name = "cedula_jugador")
-    private String cedulaDelegado;
+    private String cedulaJug;
 
     @Column(name = "nombre_jugador")
     private String nombreJugador;
@@ -30,7 +30,7 @@ public class Jugador {
     private String urlFotoJugador;
 
     @Column(name = "es_delegado")
-    private boolean esDelegado;
+    private Boolean esDelegado;
 
 
     public Jugador() {
@@ -45,12 +45,12 @@ public class Jugador {
         this.idJugador = idJugador;
     }
 
-    public String getCedulaDelegado() {
-        return cedulaDelegado;
+    public String getCedulaJug() {
+        return cedulaJug;
     }
 
-    public void setCedulaDelegado(String cedulaDelegado) {
-        this.cedulaDelegado = cedulaDelegado;
+    public void setCedulaJug(String cedulaDelegado) {
+        this.cedulaJug = cedulaDelegado;
     }
 
     public String getNombreJugador() {
@@ -93,11 +93,11 @@ public class Jugador {
         this.urlFotoJugador = urlFotoJugador;
     }
 
-    public boolean isEsDelegado() {
+    public Boolean isEsDelegado() {
         return esDelegado;
     }
 
-    public void setEsDelegado(boolean esDelegado) {
+    public void setEsDelegado(Boolean esDelegado) {
         this.esDelegado = esDelegado;
     }
 }
