@@ -1,0 +1,110 @@
+package com.torneo.goldesk.Service;
+
+import com.torneo.goldesk.Entity.Organizador;
+import com.torneo.goldesk.Entity.Torneo;
+import com.torneo.goldesk.Repository.OrganizadorRepository;
+import com.torneo.goldesk.Repository.TorneoRepository;
+import com.torneo.goldesk.dto.torneo.TorneoCreateDTO;
+import com.torneo.goldesk.dto.torneo.TorneoResponseDTO;
+import com.torneo.goldesk.dto.torneo.TorneoUpdateDTO;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TorneoService {
+
+    private final TorneoRepository torneoRepository;
+    private final OrganizadorRepository organizadorRepository;
+
+    public TorneoService(TorneoRepository torneoRepository, OrganizadorRepository organizadorRepository) {
+        this.torneoRepository = torneoRepository;
+        this.organizadorRepository = organizadorRepository;
+    }
+
+    public void recuperarTorneo(Integer id){
+        Torneo torneo = torneoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Torneo no encontrado"));
+
+        torneo.setActivo(true);
+
+        torneoRepository.save(torneo);
+    }
+
+    public void eliminarTorneo(Integer id){
+        Torneo torneo = torneoRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Torneo no encontrado"));
+
+        torneo.setActivo(false);
+
+        torneoRepository.save(torneo);
+    }
+
+    public void actualizarTorneo(TorneoUpdateDTO dto){
+
+        Torneo torneo = torneoRepository.findById(dto.getIdTorneo())
+                .orElseThrow(()-> new RuntimeException("Torneo no encontrado"));
+
+        torneo.setNombreTorneo(dto.getNombreTorneo());
+        torneo.setActivo(dto.getActivo());
+
+        torneoRepository.save(torneo);
+    }
+
+    public TorneoResponseDTO crearTorneo(TorneoCreateDTO dto){
+
+        Organizador organizador = organizadorRepository.findById(dto.getCedulaOrganizador())
+                .orElseThrow(()-> new RuntimeException("Organizador no Encontrado"));
+
+        Torneo torneo = new Torneo();
+        torneo.setNombreTorneo(dto.getNombreTorneo());
+        torneo.setValorAmarilla(dto.getValorAmarilla());
+        torneo.setValorAzul(dto.getValorAzul());
+        torneo.setValorRoja(dto.getValorRoja());
+        torneo.setValorArbitraje(dto.getValorArbitraje());
+        torneo.setValorInscripcion(dto.getValorInscripcion());
+        torneo.setValorBalonPetos(dto.getValorBalonPetos());
+        torneo.setPartidosInicial(dto.getPartidosInicial());
+        torneo.setActivo(true);
+        torneo.setOrganizador(organizador);
+
+        Torneo torneoGuardado = torneoRepository.save(torneo);
+
+        return convertirADTO(torneoGuardado);
+    }
+
+    public List<TorneoResponseDTO> obtenerTodos(){
+        return torneoRepository.findAll()
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+
+    public List<TorneoResponseDTO> obtenerActivos(){
+        return torneoRepository.findByActivoTrue()
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+    public List<TorneoResponseDTO> obtenerInactivos(){
+        return torneoRepository.findByActivoFalse()
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+    private TorneoResponseDTO convertirADTO(Torneo t) {
+        return new TorneoResponseDTO(
+                t.getIdTorneo(),
+                t.getOrganizador().getCedulaOrg(), // Es mejor sacarlo de la relación
+                t.getNombreTorneo(),
+                t.getValorAmarilla(),
+                t.getValorAzul(),
+                t.getValorRoja(),
+                t.getValorArbitraje(),
+                t.getValorInscripcion(),
+                t.getValorBalonPetos(),
+                t.getPartidosInicial(),
+                t.getActivo()
+        );
+    }
+}
