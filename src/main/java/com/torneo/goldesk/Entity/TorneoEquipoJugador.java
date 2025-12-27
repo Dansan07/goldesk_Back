@@ -2,6 +2,8 @@ package com.torneo.goldesk.Entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "torneo_equipos_jugadores")
 public class TorneoEquipoJugador {
@@ -22,7 +24,18 @@ public class TorneoEquipoJugador {
     @Column(name = "jugador_activo")
     private Boolean activo=true;
 
+    @Column(name = "fecha_inscripcion", insertable = false, updatable = false)
+    private LocalDateTime fechaInscripcion;
+
     public TorneoEquipoJugador() {
+    }
+
+    public LocalDateTime getFechaInscripcion() {
+        return fechaInscripcion;
+    }
+
+    public void setFechaInscripcion(LocalDateTime fechaInscripcion) {
+        this.fechaInscripcion = fechaInscripcion;
     }
 
     public Boolean isActivo() {

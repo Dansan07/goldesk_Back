@@ -73,7 +73,8 @@ public class JugadorService {
                 te.getEquipo().getNombreEquipo(),
                 te.getTorneo().getNombreTorneo(),
                 te.getTorneo().getCategoriaTorneo(),
-                tej.getIdTorneoEquipoJugador()
+                tej.getIdTorneoEquipoJugador(),
+                tej.getFechaInscripcion()
         );
     }
 

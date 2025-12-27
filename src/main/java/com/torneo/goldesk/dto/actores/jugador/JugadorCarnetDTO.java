@@ -2,6 +2,8 @@ package com.torneo.goldesk.dto.actores.jugador;
 
 import com.torneo.goldesk.dto.actores.PersonaBaseDTO;
 
+import java.time.LocalDateTime;
+
 public class JugadorCarnetDTO extends PersonaBaseDTO {
 
     private String urlFoto;
@@ -12,8 +14,9 @@ public class JugadorCarnetDTO extends PersonaBaseDTO {
     private String nombreTorneo;
     private String categoriaTorneo; // Ej: Libre, Veteranos, etc.
     private Integer idInscripcion;
+    private LocalDateTime fechaInscripcion;
 
-    public JugadorCarnetDTO(String cedula, String nombre, String apellidos, String telefono, String email, String urlFoto, Boolean esDelegado, String nombreEquipo, String nombreTorneo, String categoriaTorneo, Integer idInscripcion) {
+    public JugadorCarnetDTO(String cedula, String nombre, String apellidos, String telefono, String email, String urlFoto, Boolean esDelegado, String nombreEquipo, String nombreTorneo, String categoriaTorneo, Integer idInscripcion, LocalDateTime fechaInscripcion) {
         super(cedula, nombre, apellidos, telefono, email);
         this.urlFoto = urlFoto;
         this.esDelegado = esDelegado;
@@ -21,6 +24,11 @@ public class JugadorCarnetDTO extends PersonaBaseDTO {
         this.nombreTorneo = nombreTorneo;
         this.categoriaTorneo = categoriaTorneo;
         this.idInscripcion = idInscripcion;
+        this.fechaInscripcion = fechaInscripcion;
+    }
+
+    public LocalDateTime getFechaInscripcion() {
+        return fechaInscripcion;
     }
 
     public String getUrlFoto() {
