@@ -67,6 +67,7 @@ public class TorneoService {
         torneo.setPartidosInicial(dto.getPartidosInicial());
         torneo.setActivo(true);
         torneo.setOrganizador(organizador);
+        torneo.setCategoriaTorneo(dto.getCategoriaTorneo());
 
         Torneo torneoGuardado = torneoRepository.save(torneo);
 
@@ -104,6 +105,7 @@ public class TorneoService {
                 t.getValorInscripcion(),
                 t.getValorBalonPetos(),
                 t.getPartidosInicial(),
+                t.getCategoriaTorneo(),
                 t.getActivo()
         );
     }

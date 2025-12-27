@@ -12,9 +12,10 @@ public class TorneoResponseDTO {
     private double valorInscripcion;
     private double valorBalonPetos;
     private Integer partidosInicial;
-    private boolean activo;
+    private String categoriaTorneo;
+    private Boolean activo;
 
-    public TorneoResponseDTO(Integer idTorneo, String cedulaOrganizador, String nombreTorneo, double valorAmarilla, double valorAzul, double valorRoja, double valorArbitraje, double valorInscripcion, double valorBalonPetos, Integer partidosInicial, boolean activo) {
+    public TorneoResponseDTO(Integer idTorneo, String cedulaOrganizador, String nombreTorneo, double valorAmarilla, double valorAzul, double valorRoja, double valorArbitraje, double valorInscripcion, double valorBalonPetos, Integer partidosInicial, String categoriaTorneo, Boolean activo) {
         this.idTorneo = idTorneo;
         this.cedulaOrganizador = cedulaOrganizador;
         this.nombreTorneo = nombreTorneo;
@@ -25,7 +26,12 @@ public class TorneoResponseDTO {
         this.valorInscripcion = valorInscripcion;
         this.valorBalonPetos = valorBalonPetos;
         this.partidosInicial = partidosInicial;
+        this.categoriaTorneo = categoriaTorneo;
         this.activo = activo;
+    }
+
+    public String getCategoriaTorneo() {
+        return categoriaTorneo;
     }
 
     public Integer getIdTorneo() {

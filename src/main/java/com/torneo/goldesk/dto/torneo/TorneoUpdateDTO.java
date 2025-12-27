@@ -12,7 +12,17 @@ public class TorneoUpdateDTO {
     private double valorInscripcion;
     private double valorBalonPetos;
     private Integer partidosInicial;
-    private boolean activo;
+    private Boolean activo;
+    private String categoriaTorneo;
+
+
+    public String getCategoriaTorneo() {
+        return categoriaTorneo;
+    }
+
+    public void setCategoriaTorneo(String categoriaTorneo) {
+        this.categoriaTorneo = categoriaTorneo;
+    }
 
     public Integer getIdTorneo() {
         return idTorneo;
@@ -94,11 +104,11 @@ public class TorneoUpdateDTO {
         this.partidosInicial = partidosInicial;
     }
 
-    public boolean getActivo() {
+    public Boolean getActivo() {
         return activo;
     }
 
-    public void setActivo(boolean activo) {
+    public void setActivo(Boolean activo) {
         this.activo = activo;
     }
 }

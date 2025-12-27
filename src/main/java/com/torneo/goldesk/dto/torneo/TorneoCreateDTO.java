@@ -11,6 +11,11 @@ public class TorneoCreateDTO {
     private double valorInscripcion;
     private double valorBalonPetos;
     private Integer partidosInicial;
+    private String categoriaTorneo;
+
+    public String getCategoriaTorneo() {
+        return categoriaTorneo;
+    }
 
     public String getCedulaOrganizador() {
         return cedulaOrganizador;

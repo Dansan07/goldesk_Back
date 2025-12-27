@@ -1,6 +1,7 @@
 package com.torneo.goldesk.Controller;
 
 import com.torneo.goldesk.Service.JugadorService;
+import com.torneo.goldesk.dto.actores.jugador.JugadorCarnetDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCreateDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,11 @@ public class JugadorController {
 
     public JugadorController(JugadorService jugadorService) {
         this.jugadorService = jugadorService;
+    }
+
+    @GetMapping("/carnet/{idInscripcion}")
+    public ResponseEntity<JugadorCarnetDTO> obtenerCarnet(@PathVariable Integer idInscripcion) {
+        return ResponseEntity.ok(jugadorService.obtenerDatosCarnet(idInscripcion));
     }
 
     @PostMapping("inscribir/{idTorneoEquipo}")

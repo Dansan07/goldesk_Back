@@ -39,7 +39,10 @@ public class Torneo {
     private Integer partidosInicial;
 
     @Column(name = "activo")
-    private boolean activo;
+    private Boolean activo;
+
+    @Column(name = "categoria_torneo")
+    private String categoriaTorneo;
 
     //Relaciones con otras tablas
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,6 +61,14 @@ public class Torneo {
 
     //getters and setters
 
+
+    public String getCategoriaTorneo() {
+        return categoriaTorneo;
+    }
+
+    public void setCategoriaTorneo(String categoriaTorneo) {
+        this.categoriaTorneo = categoriaTorneo;
+    }
 
     public List<Equipo> getEquipos() {
         return equipos;
@@ -147,11 +158,11 @@ public class Torneo {
         this.partidosInicial = partidosInicial;
     }
 
-    public boolean getActivo() {
+    public Boolean getActivo() {
         return activo;
     }
 
-    public void setActivo(boolean activo) {
+    public void setActivo(Boolean activo) {
         this.activo = activo;
     }
 }
