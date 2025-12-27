@@ -27,8 +27,11 @@ public class TorneoEquipoJugador {
     @Column(name = "fecha_inscripcion", insertable = false, updatable = false)
     private LocalDateTime fechaInscripcion;
 
+    //constructor vacío
     public TorneoEquipoJugador() {
     }
+
+    //getters and setter
 
     public LocalDateTime getFechaInscripcion() {
         return fechaInscripcion;

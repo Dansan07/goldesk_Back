@@ -14,4 +14,6 @@ public interface OrganizadorRepository extends JpaRepository<Organizador,String>
 
     //Mtodo para verificar si el código de invitado ya existe
     boolean existsByCodigoInvitado(String codigoInvitado);
+
+    Optional<Organizador> findByCedulaOrg(String cedulaOrg);
 }

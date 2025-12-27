@@ -37,10 +37,24 @@ public class Organizador {
     @Column(name = "activo")
     private boolean activo;
 
+    @Column(name = "logo_organizador")
+    private String urlLogoOrg;
+
+    //contructor
+
     public Organizador() {
     }
 
     //getters and setters
+
+
+    public String getUrlLogoOrg() {
+        return urlLogoOrg;
+    }
+
+    public void setUrlLogoOrg(String urlLogoOrg) {
+        this.urlLogoOrg = urlLogoOrg;
+    }
 
     public String getCedulaOrg() {
         return cedulaOrg;

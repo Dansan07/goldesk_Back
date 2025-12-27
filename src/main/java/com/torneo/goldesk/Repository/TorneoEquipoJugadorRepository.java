@@ -1,11 +1,12 @@
 package com.torneo.goldesk.Repository;
 
+import com.torneo.goldesk.Entity.Jugador;
+import com.torneo.goldesk.Entity.TorneoEquipo;
 import com.torneo.goldesk.Entity.TorneoEquipoJugador;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -26,4 +27,7 @@ public interface TorneoEquipoJugadorRepository extends JpaRepository<TorneoEquip
 
     List<TorneoEquipoJugador> findByTorneoEquipo_IdTorneoEquipo(Integer idTorneoEquipo);
 
+    Optional<TorneoEquipoJugador> findActiveInscripcionByJugadorIdJugador(Integer idJugador);
+
+    Optional<TorneoEquipoJugador> findByJugadorAndTorneoEquipo(Jugador jugador, TorneoEquipo torneoEquipoActual);
 }
