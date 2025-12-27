@@ -28,6 +28,32 @@ public class JugadorService {
         this.torneoEquipoRepository = torneoEquipoRepository;
     }
 
+    @Transactional
+    public String eliminarJugadorDeEquipo(Integer idInscripcion) {
+        TorneoEquipoJugador relacion = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(idInscripcion)
+                .orElseThrow(() -> new RuntimeException("No se encontró la inscripción del jugador."));
+
+        if (!relacion.isActivo()) {
+            throw new RuntimeException("El jugador ya se encuentra inactivo en este equipo.");
+        }
+
+        relacion.setActivo(false); // Soft Delete
+        torneoEquipoJugadorRepository.save(relacion);
+
+        return "El jugador " + relacion.getJugador().getNombreJugador() + " ha sido dado de baja de la nómina.";
+    }
+
+    @Transactional
+    public String recuperarJugadorEnEquipo(Integer idInscripcion) {
+        TorneoEquipoJugador relacion = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(idInscripcion)
+                .orElseThrow(() -> new RuntimeException("No se encontró la inscripción del jugador."));
+
+        relacion.setActivo(true); // Restaurar
+        torneoEquipoJugadorRepository.save(relacion);
+
+        return "El jugador " + relacion.getJugador().getNombreJugador() + " ha sido reincorporado a la nómina.";
+    }
+
     public JugadorCarnetDTO obtenerDatosCarnet(Integer idInscripcion) {
         // Buscamos la relación en la tabla intermedia de tu imagen
         TorneoEquipoJugador tej = torneoEquipoJugadorRepository.findById(idInscripcion)

@@ -6,6 +6,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface TorneoEquipoJugadorRepository extends JpaRepository<TorneoEquipoJugador,Integer> {
 
@@ -14,5 +17,11 @@ public interface TorneoEquipoJugadorRepository extends JpaRepository<TorneoEquip
             "WHERE tej.jugador.cedulaJug = :cedula " +
             "AND tej.torneoEquipo.torneo.idTorneo = :idTorneo")
     boolean existsByJugadorAndTorneo(@Param("cedula") String cedula, @Param("idTorneo") Integer idTorneo);
+
+    // Para buscar la inscripción específica que queremos borrar o recuperar
+    Optional<TorneoEquipoJugador> findByIdTorneoEquipoJugador(Integer id);
+
+    // Opcional: Para el listado de la nómina, poder ver solo los activos
+    List<TorneoEquipoJugador> findByTorneoEquipo_IdTorneoEquipoAndActivoTrue(Integer idTorneoEquipo);
 
 }

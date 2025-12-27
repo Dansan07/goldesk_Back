@@ -17,6 +17,26 @@ public class JugadorController {
         this.jugadorService = jugadorService;
     }
 
+    @PatchMapping("/dar-de-baja/{idInscripcion}")
+    public ResponseEntity<String> darDeBaja(@PathVariable Integer idInscripcion) {
+        try {
+            String respuesta = jugadorService.eliminarJugadorDeEquipo(idInscripcion);
+            return ResponseEntity.ok(respuesta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PatchMapping("/reincorporar/{idInscripcion}")
+    public ResponseEntity<String> reincorporar(@PathVariable Integer idInscripcion) {
+        try {
+            String respuesta = jugadorService.recuperarJugadorEnEquipo(idInscripcion);
+            return ResponseEntity.ok(respuesta);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     @GetMapping("/carnet/{idInscripcion}")
     public ResponseEntity<JugadorCarnetDTO> obtenerCarnet(@PathVariable Integer idInscripcion) {
         return ResponseEntity.ok(jugadorService.obtenerDatosCarnet(idInscripcion));
