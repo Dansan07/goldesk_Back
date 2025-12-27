@@ -9,9 +9,11 @@ import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoRepository;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCarnetDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCreateDTO;
+import com.torneo.goldesk.dto.actores.jugador.JugadorUpdateDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,6 +28,60 @@ public class JugadorService {
         this.jugadorRepositoty = jugadorRepositoty;
         this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
         this.torneoEquipoRepository = torneoEquipoRepository;
+    }
+    @Transactional
+    public String traspasarDelegacion(Integer idTorneoEquipo, String cedulaNuevoDelegado) {
+        // 1. Obtener todos los jugadores de ese equipo en ese torneo
+        List<TorneoEquipoJugador> nomina = torneoEquipoJugadorRepository.findByTorneoEquipo_IdTorneoEquipo(idTorneoEquipo);
+
+        if (nomina.isEmpty()) {
+            throw new RuntimeException("El equipo no tiene jugadores inscritos.");
+        }
+
+        boolean encontrado = false;
+        String nombreJugador="";
+
+        for (TorneoEquipoJugador relacion : nomina) {
+            Jugador jugador = relacion.getJugador();
+
+            // 2. Si es el nuevo delegado, lo activamos
+            if (jugador.getCedulaJug().equals(cedulaNuevoDelegado)) {
+                jugador.setEsDelegado(true);
+                nombreJugador= jugador.getNombreJugador();
+                encontrado = true;
+            } else {
+                // 3. A todos los demás (incluyendo al anterior) los ponemos en false
+                // Esto asegura que solo quede un delegado activo.
+                jugador.setEsDelegado(false);
+            }
+            jugadorRepositoty.save(jugador);
+        }
+
+        if (!encontrado) {
+            throw new RuntimeException("El jugador : "+nombreJugador+"\n" +
+                                    " con cédula " + cedulaNuevoDelegado +
+                                    " no pertenece a este equipo.");
+        }
+
+        return "Traspaso de delegación exitoso. El nuevo responsable es el jugador :" +
+                " "+nombreJugador+"\n" +
+                " con cédula: " + cedulaNuevoDelegado;
+    }
+
+    @Transactional
+    public String actualizarDatosJugador(String cedula, JugadorUpdateDTO dto) {
+        Jugador jugador = jugadorRepositoty.findByCedulaJug(cedula)
+                .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
+
+        // Actualizamos solo lo permitido
+        jugador.setNombreJugador(dto.getNombre());
+        jugador.setApellidosJugador(dto.getApellidos());
+        jugador.setTelJugador(dto.getTelefono());
+        jugador.setEmailJugador(dto.getEmail());
+        jugador.setUrlFotoJugador(dto.getUrlFoto());
+
+        jugadorRepositoty.save(jugador);
+        return "Perfil de " + jugador.getNombreJugador() + " actualizado correctamente.";
     }
 
     @Transactional

@@ -3,6 +3,7 @@ package com.torneo.goldesk.Controller;
 import com.torneo.goldesk.Service.JugadorService;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCarnetDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCreateDTO;
+import com.torneo.goldesk.dto.actores.jugador.JugadorUpdateDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,21 @@ public class JugadorController {
 
     public JugadorController(JugadorService jugadorService) {
         this.jugadorService = jugadorService;
+    }
+
+    @PatchMapping("/traspasar-delegado/{idTorneoEquipo}/{cedulaNuevo}")
+    public ResponseEntity<String> traspasarDelegado(@PathVariable Integer idTorneoEquipo,@PathVariable String cedulaNuevo) {
+        try {
+            String msg = jugadorService.traspasarDelegacion(idTorneoEquipo, cedulaNuevo);
+            return ResponseEntity.ok(msg);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/actualizar/{cedula}")
+    public ResponseEntity<String> actualizar(@PathVariable String cedula, @RequestBody JugadorUpdateDTO dto) {
+        return ResponseEntity.ok(jugadorService.actualizarDatosJugador(cedula, dto));
     }
 
     @PatchMapping("/dar-de-baja/{idInscripcion}")

@@ -24,4 +24,6 @@ public interface TorneoEquipoJugadorRepository extends JpaRepository<TorneoEquip
     // Opcional: Para el listado de la nómina, poder ver solo los activos
     List<TorneoEquipoJugador> findByTorneoEquipo_IdTorneoEquipoAndActivoTrue(Integer idTorneoEquipo);
 
+    List<TorneoEquipoJugador> findByTorneoEquipo_IdTorneoEquipo(Integer idTorneoEquipo);
+
 }
