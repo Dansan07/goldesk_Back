@@ -30,4 +30,6 @@ public interface TorneoEquipoJugadorRepository extends JpaRepository<TorneoEquip
     Optional<TorneoEquipoJugador> findActiveInscripcionByJugadorIdJugador(Integer idJugador);
 
     Optional<TorneoEquipoJugador> findByJugadorAndTorneoEquipo(Jugador jugador, TorneoEquipo torneoEquipoActual);
+
+    boolean existsByJugadorAndTorneoEquipoAndActivoTrue(Jugador jugador, TorneoEquipo torneoEquipoSolicita);
 }

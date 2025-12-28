@@ -36,6 +36,52 @@ public class TraspasoService {
     }
 
     @Transactional
+    public void procesarAprobacion(Integer idTraspaso) {
+        // 1. Obtener la solicitud con todos sus datos
+        Traspaso solicitud = traspasoRepository.findById(idTraspaso)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        if (!"PENDIENTE".equals(solicitud.getEstado())) {
+            throw new RuntimeException("La solicitud ya ha sido procesada.");
+        }
+        // --- VALIDACIÓN DE SEGURIDAD: Evitar duplicados ---
+        boolean yaExisteEnDestino = torneoEquipoJugadorRepository
+                .existsByJugadorAndTorneoEquipoAndActivoTrue(solicitud.getJugador(), solicitud.getTorneoEquipoSolicita());
+
+        if (yaExisteEnDestino) {
+            throw new RuntimeException("Error: El jugador ya se encuentra activo en el equipo de destino.");
+        }
+
+        // --- VALIDACIÓN DE SEGURIDAD: Evitar mismo equipo ---
+        if (solicitud.getTorneoEquipoActual().getIdTorneoEquipo().equals(solicitud.getTorneoEquipoSolicita().getIdTorneoEquipo())) {
+            throw new RuntimeException("Error: El equipo de origen y destino no pueden ser el mismo.");
+        }
+
+        // 2. INHABILITAR al jugador en el equipo antiguo
+        // Accedemos al registro que vincula al jugador con el equipo de origen
+        TorneoEquipoJugador registroAntiguo=torneoEquipoJugadorRepository.findByJugadorAndTorneoEquipo(solicitud.getJugador(),solicitud.getTorneoEquipoActual())
+                .orElseThrow(()-> new RuntimeException("No se encontró Registro"));
+        registroAntiguo.setActivo(false); // O registroAntiguo.setActivo(false);
+        // Guardamos el cambio en el repositorio correspondiente
+        torneoEquipoJugadorRepository.save(registroAntiguo);
+
+        // 3. CREAR nueva instancia en el equipo nuevo
+        TorneoEquipoJugador nuevoRegistro = new TorneoEquipoJugador();
+        nuevoRegistro.setJugador(solicitud.getJugador());
+        nuevoRegistro.setTorneoEquipo(solicitud.getTorneoEquipoSolicita()); // El equipo destino
+        nuevoRegistro.setActivo(true);
+        nuevoRegistro.setFechaInscripcion(LocalDateTime.now());
+
+        // Guardamos el nuevo vínculo
+        torneoEquipoJugadorRepository.save(nuevoRegistro);
+
+        // 4. Actualizar la solicitud de traspaso
+        solicitud.setEstado("APROBADO");
+        solicitud.setFechaRespuesta(LocalDateTime.now());
+        traspasoRepository.save(solicitud);
+    }
+
+    @Transactional
     public void guardarDocumentoFirmado(Integer id, MultipartFile archivo) throws IOException {
         Traspaso solicitud = traspasoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
