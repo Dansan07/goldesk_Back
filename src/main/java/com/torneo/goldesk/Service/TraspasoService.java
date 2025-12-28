@@ -8,9 +8,12 @@ import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoRepository;
 import com.torneo.goldesk.Repository.TraspasoRepository;
 import com.torneo.goldesk.dto.traspaso.TraspasoCreateDTO;
+import com.torneo.goldesk.dto.traspaso.TraspasoResponseDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -32,14 +35,36 @@ public class TraspasoService {
         this.pdfGeneratorService = pdfGeneratorService;
     }
 
-    public List<Traspaso> listarPorEstadoYOrganizador(String estado, String cedulaOrg) {
-        if (estado.equalsIgnoreCase("PENDIENTE")) {
-            // Buscamos las que están esperando aprobación en SUS torneos
-            return traspasoRepository.findPendientesPorOrganizador(estado, cedulaOrg);
-        } else {
-            // Buscamos las que él mismo ya aprobó o rechazó (historial personal)
-            return traspasoRepository.findByEstadoAndOrganizador_CedulaOrg(estado, cedulaOrg);
+    @Transactional
+    public void guardarDocumentoFirmado(Integer id, MultipartFile archivo) throws IOException {
+        Traspaso solicitud = traspasoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        // Validar que sea un PDF
+        if (!"application/pdf".equals(archivo.getContentType())) {
+            throw new RuntimeException("Solo se permiten archivos PDF.");
         }
+
+        // Sobreescribimos el PDF generado automáticamente con el PDF que tiene las firmas reales
+        solicitud.setDocumentoFirmado(archivo.getBytes());
+
+        // Opcional: Podrías cambiar un estado interno aquí si quieres saber que ya se subió el soporte
+        traspasoRepository.save(solicitud);
+    }
+
+    public List<TraspasoResponseDTO> listarPorEstadoYOrganizador(String estado, String cedulaOrg) {
+        List<Traspaso> solicitudes= traspasoRepository.findByEstadoAndOrganizador_CedulaOrg(estado, cedulaOrg);
+
+        return solicitudes.stream().map(s -> new TraspasoResponseDTO(
+                s.getIdTraspaso(),
+                s.getJugador().getNombreJugador() + " " + s.getJugador().getApellidosJugador(),
+                s.getJugador().getCedulaJug(),
+                s.getTorneoEquipoActual().getEquipo().getNombreEquipo(),
+                s.getTorneoEquipoSolicita().getEquipo().getNombreEquipo(),
+                s.getAsunto(),
+                s.getEstado(),
+                s.getFechaSolicitud()
+        )).toList();
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.torneo.goldesk.Repository;
 
 import com.torneo.goldesk.Entity.Traspaso;
+import com.torneo.goldesk.dto.traspaso.TraspasoResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +20,7 @@ public interface TraspasoRepository extends JpaRepository<Traspaso, Integer> {
     // Para ver las PENDIENTES de los torneos que gestiona ese organizador
     // (Asumiendo que el Organizador tiene una relación con sus Torneos)
     @Query("SELECT t FROM Traspaso t WHERE t.estado = :estado AND t.torneoEquipoSolicita.torneo.organizador.cedulaOrg = :cedulaOrg")
-    List<Traspaso> findPendientesPorOrganizador(@Param("estado") String estado, @Param("cedulaOrg") String cedulaOrg);
+    List<TraspasoResponseDTO> findPendientesPorOrganizador(@Param("estado") String estado, @Param("cedulaOrg") String cedulaOrg);
 
     //verificar si existe una solicitud para no duplicarla
     boolean existsByJugador_IdJugadorAndEstado(Integer idJugador, String estado);

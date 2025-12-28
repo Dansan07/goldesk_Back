@@ -1,5 +1,6 @@
 package com.torneo.goldesk.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class Traspaso {
     private String asunto;
 
     // Aquí guardaremos la URL o el Path del PDF generado/escaneado
+    @JsonIgnore
     @Column(name = "documento_firmado")
     private byte[] documentoFirmado;
 
