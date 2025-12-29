@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 @Repository
 public interface PartidoRepository extends JpaRepository<Partido,Integer> {
@@ -17,4 +18,6 @@ public interface PartidoRepository extends JpaRepository<Partido,Integer> {
     boolean existeEnfrentamiento(@Param("local") TorneoEquipo local,
                                  @Param("visitante") TorneoEquipo visitante,
                                  @Param("fase") String fase);
+
+    Optional<Partido> findByIdPartido(Integer idPartido);
 }
