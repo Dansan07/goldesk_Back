@@ -46,12 +46,24 @@ public class Partido {
     @Column(name = "fase_torneo")
     private String faseTorneo;
 
+    @Column(name = "estado")
+    private String estado;
+
     //contructor
 
     public Partido() {
     }
 
     //getters and setters
+
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
     public Integer getIdPartido() {
         return idPartido;
