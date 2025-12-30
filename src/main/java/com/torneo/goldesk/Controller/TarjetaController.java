@@ -26,9 +26,8 @@ public class TarjetaController {
 
     // Buscar tarjetas de un jugador específico en un partido (Para la gestión)
     @GetMapping("/buscar-x-jugador")
-    public List<TarjetaResponseDTO> buscar(@RequestParam Integer idPartido,
-                                           @RequestParam Integer idTEJ) {
-        return tarjetaService.obtenerTarjetasJugadorPartido(idPartido, idTEJ);
+    public List<TarjetaResponseDTO> buscar(@RequestParam Integer idParticipacion) {
+        return tarjetaService.obtenerTarjetasPorParticipacion(idParticipacion);
     }
 
     // Eliminar la tarjeta específica

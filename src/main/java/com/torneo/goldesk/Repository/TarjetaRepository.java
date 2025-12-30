@@ -12,13 +12,7 @@ import java.util.Optional;
 @Repository
 public interface TarjetaRepository extends JpaRepository<Tarjeta,Integer> {
 
-    @Query("SELECT new com.torneo.goldesk.dto.tarjeta.TarjetaResponseDTO(" +
-            "t.idTarjeta, t.tipoTarjeta, t.jugador.jugador.nombreJugador, t.valorTarjeta, t.motivoTarjeta) " +
-            "FROM Tarjeta t WHERE t.partido.idPartido = :idPartido " +
-            "AND t.jugador.idTorneoEquipoJugador = :idTEJ")
-    List<TarjetaResponseDTO> buscarTarjetasJugadorEnPartido(
-            @Param("idPartido") Integer idPartido,
-            @Param("idTEJ") Integer idTEJ);
-
     Optional<Tarjeta> findByIdTarjeta(Integer idTarjeta);
+
+    List<TarjetaResponseDTO> findByParticipacionJugador_IdParticipacion(Integer idParticipacion);
 }

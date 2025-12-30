@@ -1,11 +1,9 @@
 package com.torneo.goldesk.Service;
 
-import com.torneo.goldesk.Entity.Partido;
+import com.torneo.goldesk.Entity.ParticipacionJugador;
 import com.torneo.goldesk.Entity.Tarjeta;
-import com.torneo.goldesk.Entity.TorneoEquipoJugador;
-import com.torneo.goldesk.Repository.PartidoRepository;
+import com.torneo.goldesk.Repository.ParticipacionJugadorRepository;
 import com.torneo.goldesk.Repository.TarjetaRepository;
-import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.dto.tarjeta.TarjetaCreateDTO;
 import com.torneo.goldesk.dto.tarjeta.TarjetaResponseDTO;
 import jakarta.transaction.Transactional;
@@ -17,32 +15,29 @@ import java.util.List;
 public class TarjetaService {
 
     private final TarjetaRepository tarjetaRepository;
-    private final PartidoRepository partidoRepository;
-    private final TorneoEquipoJugadorRepository torneoEquipoJugadorRepository;
+    private final ParticipacionJugadorRepository participacionJugadorRepository;
 
-    public TarjetaService(TarjetaRepository tarjetaRepository, PartidoRepository partidoRepository, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository) {
+    public TarjetaService(TarjetaRepository tarjetaRepository, ParticipacionJugadorRepository participacionJugadorRepository) {
         this.tarjetaRepository = tarjetaRepository;
-        this.partidoRepository = partidoRepository;
-        this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
+        this.participacionJugadorRepository = participacionJugadorRepository;
     }
 
+
     // Metodo para listar las tarjetas de un jugador en un partido
-    public List<TarjetaResponseDTO> obtenerTarjetasJugadorPartido(Integer idPartido, Integer idTEJ) {
-        return tarjetaRepository.buscarTarjetasJugadorEnPartido(idPartido, idTEJ);
+    public List<TarjetaResponseDTO> obtenerTarjetasPorParticipacion(Integer idParticipacion) {
+        return tarjetaRepository.findByParticipacionJugador_IdParticipacion(idParticipacion);
     }
 
     @Transactional
     public void registrarTarjeta(TarjetaCreateDTO dto) {
-        // 1. Buscar referencias
-        Partido partido = partidoRepository.findByIdPartido(dto.getIdPartido())
-                .orElseThrow(()-> new RuntimeException("No se encontró el Partido"));
-        TorneoEquipoJugador jugador = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(dto.getIdJugador())
-                .orElseThrow(()-> new RuntimeException("No se encontró el Jugador"));
+        // 1. Buscamos la participación única (Auditoría: vincula jugador, equipo y partido en un solo ID)
+        ParticipacionJugador participacion = participacionJugadorRepository
+                .findByPartidoIdPartidoAndJugadorIdTorneoEquipoJugador(dto.getIdPartido(), dto.getIdJugador())
+                .orElseThrow(() -> new RuntimeException("El jugador no tiene una participación activa en este partido"));
 
-        // 2. Crear objeto
+        // 2. Crear objeto Tarjeta vinculado a la participación
         Tarjeta tarjeta = new Tarjeta();
-        tarjeta.setPartido(partido);
-        tarjeta.setJugador(jugador);
+        tarjeta.setParticipacionJugador(participacion);
         tarjeta.setTipoTarjeta(dto.getTipoTarjeta().toUpperCase());
         tarjeta.setValorTarjeta(dto.getValorTarjeta());
         tarjeta.setMotivoTarjeta(dto.getMotivoTarjeta());

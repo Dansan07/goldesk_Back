@@ -26,9 +26,8 @@ public class GolController {
 
     @GetMapping("/buscar-x-jugador")
     public ResponseEntity<List<GolResponseDTO>> obtenerGolesJugadorPartido(
-            @RequestParam Integer idPartido,
-            @RequestParam Integer idTorneoEquipoJugador) {
-        return ResponseEntity.ok(golService.listarGolesJugadorEnPartido(idPartido, idTorneoEquipoJugador));
+            @RequestParam Integer idParticipacion) {
+        return ResponseEntity.ok(golService.listarGolesPorParticipacion(idParticipacion));
     }
 
     @DeleteMapping("/{id}")

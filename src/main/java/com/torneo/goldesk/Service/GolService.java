@@ -1,11 +1,11 @@
 package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.Gol;
+import com.torneo.goldesk.Entity.ParticipacionJugador;
 import com.torneo.goldesk.Entity.Partido;
-import com.torneo.goldesk.Entity.TorneoEquipoJugador;
 import com.torneo.goldesk.Repository.GolRepository;
+import com.torneo.goldesk.Repository.ParticipacionJugadorRepository;
 import com.torneo.goldesk.Repository.PartidoRepository;
-import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.dto.gol.GolCreateDTO;
 import com.torneo.goldesk.dto.gol.GolResponseDTO;
 import jakarta.transaction.Transactional;
@@ -18,44 +18,37 @@ public class GolService {
 
     private final GolRepository golRepository;
     private final PartidoRepository partidoRepository;
-    private final TorneoEquipoJugadorRepository torneoEquipoJugadorRepository;
+    private final ParticipacionJugadorRepository participacionJugadorRepository;
 
-
-    public GolService(GolRepository golRepository, PartidoRepository partidoRepository, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository) {
+    public GolService(GolRepository golRepository, PartidoRepository partidoRepository, ParticipacionJugadorRepository participacionJugadorRepository) {
         this.golRepository = golRepository;
         this.partidoRepository = partidoRepository;
-        this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
+        this.participacionJugadorRepository = participacionJugadorRepository;
     }
+
 
     @Transactional
     public void registrarGol(GolCreateDTO dto) {
-        // 1. Validar existencia
-        Partido partido = partidoRepository.findByIdPartido(dto.getIdPartido())
-                .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
-
-        TorneoEquipoJugador autor = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(dto.getIdTorneoEquipoJugador())
-                .orElseThrow(() -> new RuntimeException("Registro de jugador no encontrado"));
+        // 1. Buscamos la participación (que ya contiene al Partido y al Jugador)
+        ParticipacionJugador participacion = participacionJugadorRepository
+                .findByPartidoIdPartidoAndJugadorIdTorneoEquipoJugador(dto.getIdPartido(), dto.getIdTorneoEquipoJugador())
+                .orElseThrow(() -> new RuntimeException("El jugador no está registrado en este partido"));
 
         // 2. Crear el registro del gol
         Gol nuevoGol = new Gol();
-        nuevoGol.setPartido(partido);
-        nuevoGol.setJugador(autor);
+        nuevoGol.setParticipacionJugador(participacion);
         golRepository.save(nuevoGol);
 
-        // 3. ACTUALIZAR EL MARCADOR
-        // Usamos .getIdTorneoEquipo() para comparar los ID's de las entidades relacionadas
-        Integer idEquipoAutor = autor.getTorneoEquipo().getIdTorneoEquipo();
-        Integer idLocal = partido.getLocal().getIdTorneoEquipo();
-        Integer idVisitante = partido.getVisitante().getIdTorneoEquipo();
+        // 3. ACTUALIZAR EL MARCADOR (Usando la data de la participacion)
+        Partido partido = participacion.getPartido();
+        Integer idEquipoAutor = participacion.getJugador().getTorneoEquipo().getIdTorneoEquipo();
 
-        if (idEquipoAutor.equals(idLocal)) {
+        // Simplificamos la comparación
+        if (idEquipoAutor.equals(partido.getLocal().getIdTorneoEquipo())) {
             partido.setGolesLocal(partido.getGolesLocal() + 1);
-        } else if (idEquipoAutor.equals(idVisitante)) {
-            partido.setGolesVisitante(partido.getGolesVisitante() + 1);
         } else {
-            throw new RuntimeException("El jugador no pertenece a ninguno de los equipos que disputan este partido");
+            partido.setGolesVisitante(partido.getGolesVisitante() + 1);
         }
-
         partidoRepository.save(partido);
     }
 
@@ -65,11 +58,11 @@ public class GolService {
         Gol gol = golRepository.findByIdGol(idGol)
                 .orElseThrow(() -> new RuntimeException("El registro del gol no existe."));
 
-        Partido partido = gol.getPartido();
-        TorneoEquipoJugador autor = gol.getJugador();
+        ParticipacionJugador participacion = gol.getParticipacionJugador();
+        Partido partido = participacion.getPartido();
 
         // 2. REVERTIR EL MARCADOR DEL PARTIDO
-        Integer idEquipoAutor = autor.getTorneoEquipo().getIdTorneoEquipo();
+        Integer idEquipoAutor = participacion.getJugador().getTorneoEquipo().getIdTorneoEquipo();
         Integer idLocal = partido.getLocal().getIdTorneoEquipo();
         Integer idVisitante = partido.getVisitante().getIdTorneoEquipo();
 
@@ -89,7 +82,8 @@ public class GolService {
         golRepository.delete(gol);
     }
 
-    public List<GolResponseDTO> listarGolesJugadorEnPartido(Integer idPartido, Integer idTorneoEquipoJugador) {
-        return golRepository.findByPartidoIdPartidoAndJugadorIdTorneoEquipoJugador(idPartido, idTorneoEquipoJugador);
+    public List<GolResponseDTO> listarGolesPorParticipacion(Integer idParticipacion) {
+        // Optimización: Consulta directa por el ID de la tabla de hechos
+        return golRepository.findByParticipacionJugador_IdParticipacion(idParticipacion);
     }
 }
