@@ -3,13 +3,8 @@ package com.torneo.goldesk.Controller;
 import com.torneo.goldesk.Service.PartidoService;
 import com.torneo.goldesk.dto.partido.PartidoCreateDTO;
 import com.torneo.goldesk.dto.partido.PartidoResDuplicateDTO;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/partidos")
@@ -20,6 +15,15 @@ public class PartidoController {
 
     public PartidoController(PartidoService partidoService) {
         this.partidoService = partidoService;
+    }
+
+    @PostMapping("/{id}/iniciar")
+    public ResponseEntity<String> iniciarPartido(@PathVariable Integer idPartido) {
+        try {
+            partidoService.iniciarPartido(idPartido);
+            return ResponseEntity.ok("Partido iniciado correctamente. Las participaciones han sido generadas.");        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping
