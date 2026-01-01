@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface ParticipacionJugadorRepository extends JpaRepository<ParticipacionJugador,Integer> {
 
     Optional<ParticipacionJugador> findByPartidoIdPartidoAndJugadorIdTorneoEquipoJugador(Integer idPartido,Integer idTorneoEquipoJugador);
+
+    // En ParticipacionJugadorRepository
+    List<ParticipacionJugador> findByPartidoIdPartidoAndJugadorTorneoEquipoIdTorneoEquipo(Integer idPartido, Integer idTorneoEquipo);
 }

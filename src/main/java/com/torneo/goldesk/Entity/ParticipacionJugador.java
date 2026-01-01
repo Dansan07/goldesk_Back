@@ -18,6 +18,9 @@ public class ParticipacionJugador {
     @JoinColumn(name = "id_torneo_equipos_jugadores")
     private TorneoEquipoJugador jugador;
 
+    @Column(name = "dorsal")
+    private String dorsalJugador;
+
     //contructor
     public ParticipacionJugador() {
     }
@@ -45,5 +48,13 @@ public class ParticipacionJugador {
 
     public void setJugador(TorneoEquipoJugador jugador) {
         this.jugador = jugador;
+    }
+
+    public String getDorsalJugador() {
+        return dorsalJugador;
+    }
+
+    public void setDorsalJugador(String dorsalJugador) {
+        this.dorsalJugador = dorsalJugador;
     }
 }

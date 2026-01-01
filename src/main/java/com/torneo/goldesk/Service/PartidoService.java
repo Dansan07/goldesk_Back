@@ -10,11 +10,16 @@ import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoRepository;
 import com.torneo.goldesk.dto.partido.PartidoCreateDTO;
 import com.torneo.goldesk.dto.partido.PartidoResDuplicateDTO;
+import com.torneo.goldesk.dto.planillaDigital.JugadorPlanillaDTO;
+import com.torneo.goldesk.dto.planillaDigital.PlanillaDigitalDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PartidoService {
@@ -30,6 +35,48 @@ public class PartidoService {
         this.torneoEquipoRepository = torneoEquipoRepository;
         this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
         this.participacionJugadorRepository = participacionJugadorRepository;
+    }
+
+    public PlanillaDigitalDTO abrirPlanillaDigital(Integer idPartido) {
+        Partido partido = partidoRepository.findById(idPartido)
+                .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
+
+        List<JugadorPlanillaDTO> jugadoresLocal;
+        List<JugadorPlanillaDTO> jugadoresVisitantes;
+
+        // Evitar duplicar participaciones si el partido ya inició
+        if (!"PROGRAMADO".equals(partido.getEstado())) {
+            jugadoresLocal=listarParticipantesPorPartido(partido.getIdPartido(),partido.getLocal().getIdTorneoEquipo());
+            jugadoresVisitantes=listarParticipantesPorPartido(partido.getIdPartido(),partido.getVisitante().getIdTorneoEquipo());
+        }else {
+            jugadoresLocal=listarDisponiblesPorEquipo(partido.getLocal().getIdTorneoEquipo());
+            jugadoresVisitantes=listarDisponiblesPorEquipo(partido.getVisitante().getIdTorneoEquipo());
+        }
+        String nombreEquipoLocal = partido.getLocal().getEquipo().getNombreEquipo();
+        String nombreEquipoVisitante= partido.getVisitante().getEquipo().getNombreEquipo();
+        LocalDate fechaPartido = partido.getFechaPartido();
+        LocalTime horaPartido = partido.getHoraPartido();
+        String nombreCancha = partido.getNombreCancha();
+        String faseTorneo = partido.getFaseTorneo();
+
+        return new PlanillaDigitalDTO(
+                partido.getIdPartido(),
+                fechaPartido,
+                horaPartido,
+                nombreCancha,
+                partido.getGolesLocal(),
+                partido.getGolesVisitante(),
+                partido.getPenalesLocal(),
+                partido.getPenalesVisitante(),
+                faseTorneo,
+                partido.getEstado(),
+                partido.getLocal().getIdTorneoEquipo(),
+                nombreEquipoLocal,
+                jugadoresLocal,
+                partido.getVisitante().getIdTorneoEquipo(),
+                nombreEquipoVisitante,
+                jugadoresVisitantes
+        );
     }
 
     @Transactional
@@ -58,6 +105,36 @@ public class PartidoService {
         // 5. Cambiar estado del partido
         partido.setEstado("EN_CURSO");
         partidoRepository.save(partido);
+    }
+
+    //retorna una lista de jugadores disponibles para el partido.
+    public List<JugadorPlanillaDTO> listarDisponiblesPorEquipo(Integer idTorneoEquipo) {
+        return torneoEquipoJugadorRepository.findByTorneoEquipoIdTorneoEquipoAndActivo(idTorneoEquipo, true)
+                .stream()
+                .map(j -> new JugadorPlanillaDTO(
+                        j.getIdTorneoEquipoJugador(),
+                        j.getJugador().getNombreJugador()))
+                .collect(Collectors.toList());
+    }
+
+    //retorna una lista de jugadores que ya fueron participantes del partido
+    public List<JugadorPlanillaDTO> listarParticipantesPorPartido(Integer idPartido, Integer idTorneoEquipo) {
+        return participacionJugadorRepository.findByPartidoIdPartidoAndJugadorTorneoEquipoIdTorneoEquipo(idPartido,idTorneoEquipo)
+                .stream()
+                .map(p -> new JugadorPlanillaDTO(
+                        p.getIdParticipacion(),
+                        p.getJugador().getJugador().getNombreJugador(),
+                        p.getDorsalJugador()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void actualizarDorsalManual(Integer idParticipacion, String nuevoDorsal) {
+        ParticipacionJugador participacion = participacionJugadorRepository.findById(idParticipacion)
+                .orElseThrow(() -> new RuntimeException("No se encontró la participación del jugador"));
+
+        participacion.setDorsalJugador(nuevoDorsal);
+        participacionJugadorRepository.save(participacion);
     }
 
     private void registrarParticipaciones(Partido partido, List<TorneoEquipoJugador> jugadores) {
