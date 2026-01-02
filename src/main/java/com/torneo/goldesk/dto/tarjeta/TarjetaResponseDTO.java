@@ -5,10 +5,10 @@ public class TarjetaResponseDTO {
     private Integer idTarjeta;
     private String tipoTarjeta;
     private String nombreJugador;
-    private Integer valorTarjeta;
+    private Double valorTarjeta;
     private String motivo;
 
-    public TarjetaResponseDTO(Integer idTarjeta, String tipoTarjeta, String nombreJugador, Integer valorTarjeta, String motivo) {
+    public TarjetaResponseDTO(Integer idTarjeta, String tipoTarjeta, String nombreJugador, Double valorTarjeta, String motivo) {
         this.idTarjeta = idTarjeta;
         this.tipoTarjeta = tipoTarjeta;
         this.nombreJugador = nombreJugador;
@@ -28,7 +28,7 @@ public class TarjetaResponseDTO {
         return nombreJugador;
     }
 
-    public Integer getValorTarjeta() {
+    public Double getValorTarjeta() {
         return valorTarjeta;
     }
 

@@ -1,13 +1,10 @@
 package com.torneo.goldesk.Repository;
 
 import com.torneo.goldesk.Entity.PagoInscripcion;
-import com.torneo.goldesk.dto.registroPagos.inscripcion.AbonoDetalleDTO;
-import com.torneo.goldesk.dto.registroPagos.inscripcion.EstadoCuentaInscripcionDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface PagoInscripcionRepository extends JpaRepository<PagoInscripcion,Integer> {

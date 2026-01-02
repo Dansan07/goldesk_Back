@@ -31,7 +31,7 @@ public class GolService {
     public void registrarGol(GolCreateDTO dto) {
         // 1. Buscamos la participación (que ya contiene al Partido y al Jugador)
         ParticipacionJugador participacion = participacionJugadorRepository
-                .findByPartidoIdPartidoAndJugadorIdTorneoEquipoJugador(dto.getIdPartido(), dto.getIdTorneoEquipoJugador())
+                .findByPartidoIdPartidoAndTorneoEquipoJugadorIdTorneoEquipoJugador(dto.getIdPartido(), dto.getIdTorneoEquipoJugador())
                 .orElseThrow(() -> new RuntimeException("El jugador no está registrado en este partido"));
 
         // 2. Crear el registro del gol
@@ -41,7 +41,7 @@ public class GolService {
 
         // 3. ACTUALIZAR EL MARCADOR (Usando la data de la participacion)
         Partido partido = participacion.getPartido();
-        Integer idEquipoAutor = participacion.getJugador().getTorneoEquipo().getIdTorneoEquipo();
+        Integer idEquipoAutor = participacion.getTorneoEquipoJugador().getTorneoEquipo().getIdTorneoEquipo();
 
         // Simplificamos la comparación
         if (idEquipoAutor.equals(partido.getLocal().getIdTorneoEquipo())) {
@@ -62,7 +62,7 @@ public class GolService {
         Partido partido = participacion.getPartido();
 
         // 2. REVERTIR EL MARCADOR DEL PARTIDO
-        Integer idEquipoAutor = participacion.getJugador().getTorneoEquipo().getIdTorneoEquipo();
+        Integer idEquipoAutor = participacion.getTorneoEquipoJugador().getTorneoEquipo().getIdTorneoEquipo();
         Integer idLocal = partido.getLocal().getIdTorneoEquipo();
         Integer idVisitante = partido.getVisitante().getIdTorneoEquipo();
 

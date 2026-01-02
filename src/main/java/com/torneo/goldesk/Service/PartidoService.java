@@ -157,11 +157,11 @@ public class PartidoService {
 
     //retorna una lista de jugadores que ya fueron participantes del partido
     public List<JugadorPlanillaDTO> listarParticipantesPorPartido(Integer idPartido, Integer idTorneoEquipo) {
-        return participacionJugadorRepository.findByPartidoIdPartidoAndJugadorTorneoEquipoIdTorneoEquipo(idPartido,idTorneoEquipo)
+        return participacionJugadorRepository.findByPartidoIdPartidoAndTorneoEquipoJugadorTorneoEquipoIdTorneoEquipo(idPartido,idTorneoEquipo)
                 .stream()
                 .map(p -> new JugadorPlanillaDTO(
                         p.getIdParticipacion(),
-                        p.getJugador().getJugador().getNombreJugador(),
+                        p.getTorneoEquipoJugador().getJugador().getNombreJugador(),
                         p.getDorsalJugador()))
                 .collect(Collectors.toList());
     }
@@ -179,7 +179,7 @@ public class PartidoService {
         for (TorneoEquipoJugador tej : jugadores) {
             ParticipacionJugador participacion = new ParticipacionJugador();
             participacion.setPartido(partido);
-            participacion.setJugador(tej); // El 'id_torneo_equipos_jugadores' de tu entidad
+            participacion.setTorneoEquipoJugador(tej); // El 'id_torneo_equipos_jugadores' de tu entidad
             participacionJugadorRepository.save(participacion);
         }
     }

@@ -15,7 +15,7 @@ public class Tarjeta {
     private String tipoTarjeta; // AMARILLA o ROJA
 
     @Column(name = "valor_tarjeta")
-    private Integer valorTarjeta; // Para el costo de la multa
+    private Double valorTarjeta; // Para el costo de la multa
 
     @Column(name = "motivo_tarjeta")
     private String motivoTarjeta;
@@ -47,11 +47,11 @@ public class Tarjeta {
         this.tipoTarjeta = tipoTarjeta;
     }
 
-    public Integer getValorTarjeta() {
+    public Double getValorTarjeta() {
         return valorTarjeta;
     }
 
-    public void setValorTarjeta(Integer valorTarjeta) {
+    public void setValorTarjeta(Double valorTarjeta) {
         this.valorTarjeta = valorTarjeta;
     }
 

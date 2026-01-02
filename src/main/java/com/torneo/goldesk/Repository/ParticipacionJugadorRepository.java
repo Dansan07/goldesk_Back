@@ -10,8 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ParticipacionJugadorRepository extends JpaRepository<ParticipacionJugador,Integer> {
 
-    Optional<ParticipacionJugador> findByPartidoIdPartidoAndJugadorIdTorneoEquipoJugador(Integer idPartido,Integer idTorneoEquipoJugador);
+    Optional<ParticipacionJugador> findByPartidoIdPartidoAndTorneoEquipoJugadorIdTorneoEquipoJugador(Integer idPartido, Integer idTorneoEquipoJugador);
 
     // En ParticipacionJugadorRepository
-    List<ParticipacionJugador> findByPartidoIdPartidoAndJugadorTorneoEquipoIdTorneoEquipo(Integer idPartido, Integer idTorneoEquipo);
+    List<ParticipacionJugador> findByPartidoIdPartidoAndTorneoEquipoJugadorTorneoEquipoIdTorneoEquipo(Integer idPartido, Integer idTorneoEquipo);
 }

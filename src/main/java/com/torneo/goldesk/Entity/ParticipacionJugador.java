@@ -16,7 +16,7 @@ public class ParticipacionJugador {
 
     @ManyToOne
     @JoinColumn(name = "id_torneo_equipos_jugadores")
-    private TorneoEquipoJugador jugador;
+    private TorneoEquipoJugador torneoEquipoJugador;
 
     @Column(name = "dorsal")
     private String dorsalJugador;
@@ -42,12 +42,12 @@ public class ParticipacionJugador {
         this.partido = partido;
     }
 
-    public TorneoEquipoJugador getJugador() {
-        return jugador;
+    public TorneoEquipoJugador getTorneoEquipoJugador() {
+        return torneoEquipoJugador;
     }
 
-    public void setJugador(TorneoEquipoJugador jugador) {
-        this.jugador = jugador;
+    public void setTorneoEquipoJugador(TorneoEquipoJugador torneoEquipoJugador) {
+        this.torneoEquipoJugador = torneoEquipoJugador;
     }
 
     public String getDorsalJugador() {

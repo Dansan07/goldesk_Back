@@ -18,6 +18,13 @@ public class TarjetaController {
         this.tarjetaService = tarjetaService;
     }
 
+    // NUEVO: Listado de tarjetas por Torneo
+    @GetMapping("/buscar-x-torneo/{idTorneo}")
+    public ResponseEntity<List<TarjetaResponseDTO>> listarPorTorneo(@PathVariable Integer idTorneo) {
+        List<TarjetaResponseDTO> tarjetas = tarjetaService.obtenerHistorialTarjetas(idTorneo);
+        return ResponseEntity.ok(tarjetas);
+    }
+
     // Registrar una nueva tarjeta
     @PostMapping
     public void registrar(@RequestBody TarjetaCreateDTO dto) {
@@ -25,8 +32,8 @@ public class TarjetaController {
     }
 
     // Buscar tarjetas de un jugador específico en un partido (Para la gestión)
-    @GetMapping("/buscar-x-jugador")
-    public List<TarjetaResponseDTO> buscar(@RequestParam Integer idParticipacion) {
+    @GetMapping("/buscar-x-jugador/{idParticipacion}")
+    public List<TarjetaResponseDTO> buscar(@PathVariable Integer idParticipacion) {
         return tarjetaService.obtenerTarjetasPorParticipacion(idParticipacion);
     }
 

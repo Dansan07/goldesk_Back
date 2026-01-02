@@ -3,7 +3,7 @@ package com.torneo.goldesk.dto.tarjeta;
 public class TarjetaCreateDTO {
 
     private String tipoTarjeta;
-    private Integer valorTarjeta;
+    private Double valorTarjeta;
     private String motivoTarjeta;
     private Integer idPartido;
     private Integer idJugador;
@@ -12,7 +12,7 @@ public class TarjetaCreateDTO {
         return tipoTarjeta;
     }
 
-    public Integer getValorTarjeta() {
+    public Double getValorTarjeta() {
         return valorTarjeta;
     }
 
