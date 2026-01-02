@@ -18,6 +18,7 @@ public class PagoArbitrajeService {
     public final PagoArbitrajeRepository pagoArbitrajeRepository;
     private final PartidoRepository partidoRepository;
     private final TorneoEquipoRepository torneoEquipoRepository;
+
     public PagoArbitrajeService(PagoArbitrajeRepository pagoArbitrajeRepository, PartidoRepository partidoRepository, TorneoEquipoRepository torneoEquipoRepository) {
         this.pagoArbitrajeRepository = pagoArbitrajeRepository;
         this.partidoRepository = partidoRepository;
