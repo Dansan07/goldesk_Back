@@ -11,6 +11,7 @@ public interface TorneoEquipoRepository extends JpaRepository<TorneoEquipo,Integ
 
     Optional<TorneoEquipo> findByTorneo_IdTorneoAndEquipo_IdEquipo(Integer idTorneo, Integer idEquipo);
     List<TorneoEquipo> findByTorneo_IdTorneo(Integer idTorneo);
+    Optional<TorneoEquipo> findByIdTorneoEquipo(Integer idTorneoEquipo);
 
     //torneos con sus equipos
     List<TorneoEquipo> findByTorneo_IdTorneoAndEquipoActivoTrue(Integer idTorneo);

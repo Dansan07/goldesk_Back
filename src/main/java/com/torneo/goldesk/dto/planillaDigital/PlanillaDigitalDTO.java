@@ -1,7 +1,5 @@
 package com.torneo.goldesk.dto.planillaDigital;
 
-import com.torneo.goldesk.Entity.Partido;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -24,18 +22,22 @@ public class PlanillaDigitalDTO{
     private Integer idEquipoLocal;
     private String nombreEquipoLocal;
     private List<JugadorPlanillaDTO> jugadoresLocal;
+    private Double pagoArbitrajeLocal;
+    private Boolean arbPagadoLocal;
 
     // Información del equipo visitante
     private Integer idEquipoVisitante;
     private String nombreEquipoVisitante;
     private List<JugadorPlanillaDTO> jugadoresVisitante;
+    private Double pagoArbitrajeVisitante;
+    private Boolean arbPagadoVisitante;
 
     //constructor
     public PlanillaDigitalDTO(Integer idPartido, LocalDate fechaPartido, LocalTime horaPartido, String nombreCancha,
                               Integer golesLocal, Integer golesVisitante, Integer penalesLocal, Integer penalesVisitante,
                               String faseTorneo, String estado, Integer idEquipoLocal, String nombreEquipoLocal,
-                              List<JugadorPlanillaDTO> jugadoresLocal, Integer idEquipoVisitante,
-                              String nombreEquipoVisitante, List<JugadorPlanillaDTO> jugadoresVisitante) {
+                              List<JugadorPlanillaDTO> jugadoresLocal, Double pagoArbitrajeLocal, Boolean arbPagadoLocal, Integer idEquipoVisitante,
+                              String nombreEquipoVisitante, List<JugadorPlanillaDTO> jugadoresVisitante, Double pagoArbitrajeVisitante, Boolean arbPagadoVisitante) {
         this.idPartido = idPartido;
         this.fechaPartido = fechaPartido;
         this.horaPartido = horaPartido;
@@ -49,12 +51,49 @@ public class PlanillaDigitalDTO{
         this.idEquipoLocal = idEquipoLocal;
         this.nombreEquipoLocal = nombreEquipoLocal;
         this.jugadoresLocal = jugadoresLocal;
+        this.pagoArbitrajeLocal = pagoArbitrajeLocal;
+        this.arbPagadoLocal = arbPagadoLocal;
         this.idEquipoVisitante = idEquipoVisitante;
         this.nombreEquipoVisitante = nombreEquipoVisitante;
         this.jugadoresVisitante = jugadoresVisitante;
+        this.pagoArbitrajeVisitante = pagoArbitrajeVisitante;
+        this.arbPagadoVisitante = arbPagadoVisitante;
     }
 
     //getters and setters
+
+
+    public Boolean getArbPagadoLocal() {
+        return arbPagadoLocal;
+    }
+
+    public void setArbPagadoLocal(Boolean arbPagadoLocal) {
+        this.arbPagadoLocal = arbPagadoLocal;
+    }
+
+    public Boolean getArbPagadoVisitante() {
+        return arbPagadoVisitante;
+    }
+
+    public void setArbPagadoVisitante(Boolean arbPagadoVisitante) {
+        this.arbPagadoVisitante = arbPagadoVisitante;
+    }
+
+    public Double getPagoArbitrajeLocal() {
+        return pagoArbitrajeLocal;
+    }
+
+    public void setPagoArbitrajeLocal(Double pagoArbitrajeLocal) {
+        this.pagoArbitrajeLocal = pagoArbitrajeLocal;
+    }
+
+    public Double getPagoArbitrajeVisitante() {
+        return pagoArbitrajeVisitante;
+    }
+
+    public void setPagoArbitrajeVisitante(Double pagoArbitrajeVisitante) {
+        this.pagoArbitrajeVisitante = pagoArbitrajeVisitante;
+    }
 
     public Integer getIdPartido() {
         return idPartido;

@@ -1,13 +1,7 @@
 package com.torneo.goldesk.Service;
 
-import com.torneo.goldesk.Entity.ParticipacionJugador;
-import com.torneo.goldesk.Entity.Partido;
-import com.torneo.goldesk.Entity.TorneoEquipo;
-import com.torneo.goldesk.Entity.TorneoEquipoJugador;
-import com.torneo.goldesk.Repository.ParticipacionJugadorRepository;
-import com.torneo.goldesk.Repository.PartidoRepository;
-import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
-import com.torneo.goldesk.Repository.TorneoEquipoRepository;
+import com.torneo.goldesk.Entity.*;
+import com.torneo.goldesk.Repository.*;
 import com.torneo.goldesk.dto.partido.PartidoCreateDTO;
 import com.torneo.goldesk.dto.partido.PartidoResDuplicateDTO;
 import com.torneo.goldesk.dto.planillaDigital.JugadorPlanillaDTO;
@@ -28,21 +22,61 @@ public class PartidoService {
     private final TorneoEquipoRepository torneoEquipoRepository;
     private final TorneoEquipoJugadorRepository torneoEquipoJugadorRepository;
     private final ParticipacionJugadorRepository participacionJugadorRepository;
+    private final PagoArbitrajeRepository pagoArbitrajeRepository;
+    private final TorneoRepository torneoRepository;
 
 
-    public PartidoService(PartidoRepository partidoRepository, TorneoEquipoRepository torneoEquipoRepository, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository, ParticipacionJugadorRepository participacionJugadorRepository) {
+    public PartidoService(PartidoRepository partidoRepository, TorneoEquipoRepository torneoEquipoRepository, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository, ParticipacionJugadorRepository participacionJugadorRepository, PagoArbitrajeRepository pagoArbitrajeRepository, TorneoRepository torneoRepository) {
         this.partidoRepository = partidoRepository;
         this.torneoEquipoRepository = torneoEquipoRepository;
         this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
         this.participacionJugadorRepository = participacionJugadorRepository;
+        this.pagoArbitrajeRepository = pagoArbitrajeRepository;
+        this.torneoRepository = torneoRepository;
     }
 
     public PlanillaDigitalDTO abrirPlanillaDigital(Integer idPartido) {
         Partido partido = partidoRepository.findById(idPartido)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
 
+        Torneo torneo = torneoRepository.findByIdTorneo(partido.getLocal().getTorneo().getIdTorneo())
+                .orElseThrow(()->new RuntimeException("No se encontró Torneo"));
+
+        PagoArbitraje pagoArbitrajeLocal = pagoArbitrajeRepository.findByPartidoIdPartidoAndTorneoEquipoIdTorneoEquipo(idPartido, partido.getLocal().getIdTorneoEquipo())
+                .orElse(null);
+
+        PagoArbitraje pagoArbitrajeVisitante = pagoArbitrajeRepository.findByPartidoIdPartidoAndTorneoEquipoIdTorneoEquipo(idPartido, partido.getVisitante().getIdTorneoEquipo())
+                .orElse(null);
+
+        //Si pago está completo
+        boolean pagoLocal=false;
+        boolean pagoVisitante=false;
+
+
+        //Pagos de Arbitraje
+        Double arbitrajeLocal=0.0;
+        Double arbitrajeVisitante=0.0;
+
+        //lista de jugadores
         List<JugadorPlanillaDTO> jugadoresLocal;
         List<JugadorPlanillaDTO> jugadoresVisitantes;
+
+        //validar si existe un pago Registrado
+        if (pagoArbitrajeLocal!=null){
+            arbitrajeLocal=pagoArbitrajeLocal.getMonto();
+        }
+
+        if (pagoArbitrajeVisitante!=null){
+            arbitrajeVisitante=pagoArbitrajeVisitante.getMonto();
+        }
+
+        //validar si ya se pago el arbitraje
+        if (arbitrajeLocal.equals(torneo.getValorArbitraje())) {
+            pagoLocal = true;
+        }
+        if (arbitrajeVisitante.equals(torneo.getValorArbitraje())){
+            pagoVisitante = true;
+        }
 
         // Evitar duplicar participaciones si el partido ya inició
         if (!"PROGRAMADO".equals(partido.getEstado())) {
@@ -73,9 +107,13 @@ public class PartidoService {
                 partido.getLocal().getIdTorneoEquipo(),
                 nombreEquipoLocal,
                 jugadoresLocal,
+                arbitrajeLocal,
+                pagoLocal,
                 partido.getVisitante().getIdTorneoEquipo(),
                 nombreEquipoVisitante,
-                jugadoresVisitantes
+                jugadoresVisitantes,
+                arbitrajeVisitante,
+                pagoVisitante
         );
     }
 
