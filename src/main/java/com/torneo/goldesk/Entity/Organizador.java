@@ -1,9 +1,6 @@
 package com.torneo.goldesk.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "organizadores")
@@ -31,8 +28,9 @@ public class Organizador {
     @Column(name = "codigo_invitado")
     private String codigoInvitado;
 
-    @Column(name = "id_rol")
-    private Integer idRol;
+    @ManyToOne
+    @JoinColumn(name = "id_rol")
+    private Rol rol;
 
     @Column(name = "activo")
     private boolean activo;
@@ -112,12 +110,12 @@ public class Organizador {
         this.codigoInvitado = codigoInvitado;
     }
 
-    public Integer getIdRol() {
-        return idRol;
+    public Rol getRol() {
+        return rol;
     }
 
-    public void setIdRol(Integer idRol) {
-        this.idRol = idRol;
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 
     public boolean getActivo() {

@@ -5,10 +5,12 @@ import com.torneo.goldesk.Service.PdfGeneratorService;
 import com.torneo.goldesk.Service.TraspasoService;
 import com.torneo.goldesk.dto.traspaso.TraspasoCreateDTO;
 import com.torneo.goldesk.dto.traspaso.TraspasoResponseDTO;
+import com.torneo.goldesk.dto.traspaso.TraspasoUpdateDTO;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -71,20 +73,17 @@ public class TraspasoController {
 
     // 3. Obtener solicitudes por estado (Para la vista del Organizador)
     @GetMapping("/mis-solicitudes")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
     public ResponseEntity<List<TraspasoResponseDTO>> listarMisSolicitudes(
-            @RequestParam String estado,
-            @RequestParam String cedulaOrg) {
-        return ResponseEntity.ok(traspasoService.listarPorEstadoYOrganizador(estado, cedulaOrg));
+            @RequestParam String estado) {
+        return ResponseEntity.ok(traspasoService.listarPorEstadoYOrganizador(estado));
     }
 
     // 4. Finalizar el proceso (Aprobar/Rechazar)
     @PatchMapping("/responder/{idTraspaso}")
-    public ResponseEntity<String> responder(
-            @PathVariable Integer idTraspaso,
-            @RequestParam String nuevoEstado,
-            @RequestParam String observaciones,
-            @RequestParam String cedulaOrg) {
-        return ResponseEntity.ok(traspasoService.responderSolicitud(idTraspaso, nuevoEstado, observaciones, cedulaOrg));
+    @PreAuthorize("hasRole('ROLE_ORGANIZADOR')")
+    public ResponseEntity<String> responder(@RequestBody TraspasoUpdateDTO dto) {
+        return ResponseEntity.ok(traspasoService.responderSolicitud(dto));
     }
 
 }

@@ -17,10 +17,10 @@ public class JwtService {
         this.jwtConfig = jwtConfig;
     }
 
-    public String generarToken(String cedula, Integer rol) {
+    public String generarToken(String cedula, String nombreRol) {
         return Jwts.builder()
                 .setSubject(cedula)
-                .claim("rol", rol)
+                .claim("rol", nombreRol)
                 .setIssuedAt(new Date())
                 .setExpiration(
                         new Date(System.currentTimeMillis() + jwtConfig.getExpiration())

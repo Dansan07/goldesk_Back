@@ -1,5 +1,6 @@
 package com.torneo.goldesk.Config;
 
+import com.torneo.goldesk.Exception.AuthException;
 import com.torneo.goldesk.Service.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -10,8 +11,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,9 +21,11 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final HandlerExceptionResolver resolver;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(JwtService jwtService, HandlerExceptionResolver resolver) {
         this.jwtService = jwtService;
+        this.resolver = resolver;
     }
 
     @Override
@@ -37,15 +40,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
             return;
         }
+
         String token = authHeader.substring(7);
 
         try {
             Claims claims = jwtService.extraerClaims(token);
             String cedula = claims.getSubject();
-            Integer rolId = claims.get("rol",Integer.class);
+            String nombreRol = claims.get("rol",String.class);
 
-            // Convertir el ID de rol a una autoridad de Spring Security (ej. "ROLE_2")
-            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_"+rolId));
+            // Convertir el ID de rol a una autoridad de Spring Security (ej. "ROLE_ADMIN")
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_"+ nombreRol));
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
@@ -57,9 +61,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     new WebAuthenticationDetailsSource().buildDetails(request)
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request,response);
+
         }catch (Exception e){
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resolver.resolveException(request,response,null,new AuthException("Token inválido o expirado"));
         }
-        filterChain.doFilter(request,response);
     }
 }

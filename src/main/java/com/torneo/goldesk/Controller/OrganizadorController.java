@@ -10,6 +10,7 @@ import com.torneo.goldesk.dto.actores.organizador.OrganizadorUpdateDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +42,7 @@ public class OrganizadorController {
 
     //busca los torneos que le perteneces a su respectivo organizador
     @GetMapping("/{cedula}/torneos")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
     public ResponseEntity<?> obtenerTorneosDelOrganizador(@PathVariable String cedula) {
         // Extraer la cédula del contexto de seguridad (la que viene en el JWT)
         String cedulaToken = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -58,12 +60,14 @@ public class OrganizadorController {
 
     //muestra una vista de torneos con sus respectivos equipos asociados y activos
     @GetMapping("/{cedula}/panel-general")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
     public ResponseEntity<List<VistaTorneoEquiposDTO>> obtenerPanel(@PathVariable String cedula) {
         return ResponseEntity.ok(panelOrganizadorService.obtenerVistaEquiposPorTorneo(cedula));
     }
 
     //habilita el organizador con Activo=true
     @PatchMapping("/{cedula}/recuperar")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> activarOrganizador(@PathVariable String cedula){
 
         organizadorService.activarOrganizador(cedula);
@@ -72,6 +76,7 @@ public class OrganizadorController {
 
     //inhabilita el organizador con Activo=false
     @DeleteMapping("/{cedula}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> inactivarOrganizador(@PathVariable String cedula){
 
         organizadorService.inactivarOrganizador(cedula);
@@ -80,6 +85,7 @@ public class OrganizadorController {
 
     //actualiza la información del organizador
     @PutMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
     public ResponseEntity<String> actualizarOrganizador(@RequestBody OrganizadorUpdateDTO dto){
         organizadorService.actualizarOrganizador(dto);
         return ResponseEntity.ok("Datos de Organizador actualizados Correctamente");
@@ -87,6 +93,7 @@ public class OrganizadorController {
 
     //crea un nuevo Organizador
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<OrganizadorResponseDTO> crearOrganizador(@RequestBody OrganizadorCreateDTO dto){
         OrganizadorResponseDTO organizadorCreado = organizadorService.crearOrganizador(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(organizadorCreado);
@@ -94,18 +101,21 @@ public class OrganizadorController {
 
     //muestra una lista de todos los organizadores
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<OrganizadorResponseDTO> listarTodos(){
         return organizadorService.obtenerTodos();
     }
 
     //muestra una lista de todos los organizadores ACTIVOS
     @GetMapping("/activos")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<OrganizadorResponseDTO> listarActivos(){
         return organizadorService.obtenerActivos();
     }
 
     //muestra una lista de todos los organizadores INACTIVOS
     @GetMapping("/inactivos")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<OrganizadorResponseDTO> listaInactivos(){
         return organizadorService.obtenerInactivos();
     }

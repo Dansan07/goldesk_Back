@@ -9,7 +9,9 @@ import com.torneo.goldesk.Repository.TorneoEquipoRepository;
 import com.torneo.goldesk.Repository.TraspasoRepository;
 import com.torneo.goldesk.dto.traspaso.TraspasoCreateDTO;
 import com.torneo.goldesk.dto.traspaso.TraspasoResponseDTO;
+import com.torneo.goldesk.dto.traspaso.TraspasoUpdateDTO;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -98,7 +100,10 @@ public class TraspasoService {
         traspasoRepository.save(solicitud);
     }
 
-    public List<TraspasoResponseDTO> listarPorEstadoYOrganizador(String estado, String cedulaOrg) {
+    public List<TraspasoResponseDTO> listarPorEstadoYOrganizador(String estado) {
+        String cedulaOrg= (String) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
         List<Traspaso> solicitudes= traspasoRepository.findByEstadoAndOrganizador_CedulaOrg(estado, cedulaOrg);
 
         return solicitudes.stream().map(s -> new TraspasoResponseDTO(
@@ -169,15 +174,15 @@ public class TraspasoService {
     }
 
     @Transactional
-    public String responderSolicitud(Integer idTraspaso, String estadoNuevo, String obs, String cedulaOrg) {
-        Traspaso solicitud = traspasoRepository.findByIdTraspaso(idTraspaso)
+    public String responderSolicitud(TraspasoUpdateDTO dto) {
+        Traspaso solicitud = traspasoRepository.findByIdTraspaso(dto.getIdTraspaso())
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
-        solicitud.setEstado(estadoNuevo);
-        solicitud.setObservaciones(obs);
+        solicitud.setEstado(dto.getEstado());
+        solicitud.setObservaciones(dto.getObservaciones());
         solicitud.setFechaRespuesta(LocalDateTime.now());
 
-        if (estadoNuevo.equalsIgnoreCase("APROBADO")) {
+        if (dto.getEstado().equalsIgnoreCase("APROBADO")) {
             // 1. Desactivar en equipo actual
             TorneoEquipoJugador antigua = torneoEquipoJugadorRepository
                     .findByJugadorAndTorneoEquipo(solicitud.getJugador(), solicitud.getTorneoEquipoActual())
@@ -195,6 +200,6 @@ public class TraspasoService {
         }
 
         traspasoRepository.save(solicitud);
-        return "Traspaso " + estadoNuevo + " correctamente.";
+        return "Traspaso " + dto.getEstado() + " correctamente.";
     }
 }

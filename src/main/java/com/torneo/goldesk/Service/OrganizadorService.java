@@ -1,7 +1,9 @@
 package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.Organizador;
+import com.torneo.goldesk.Entity.Rol;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
+import com.torneo.goldesk.Repository.RolRepository;
 import com.torneo.goldesk.dto.actores.organizador.LoginRequestDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorCreateDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
@@ -16,12 +18,14 @@ import java.util.Map;
 public class OrganizadorService {
 
     private final OrganizadorRepository organizadorRepository;
+    private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
     private final MessageService messageService;
     private final JwtService jwtService;
 
-    public OrganizadorService(OrganizadorRepository organizadorRepository, PasswordEncoder passwordEncoder, MessageService messageService, JwtService jwtService) {
+    public OrganizadorService(OrganizadorRepository organizadorRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder, MessageService messageService, JwtService jwtService) {
         this.organizadorRepository = organizadorRepository;
+        this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
         this.messageService = messageService;
         this.jwtService = jwtService;
@@ -45,7 +49,7 @@ public class OrganizadorService {
         }
 
         //4. generar token
-        String token = jwtService.generarToken(org.getCedulaOrg(),org.getIdRol());
+        String token = jwtService.generarToken(org.getCedulaOrg(),org.getRol().getTipoRol());
 
         // 5. Retornar tanto el perfil como el token
         return Map.of(
@@ -92,6 +96,8 @@ public class OrganizadorService {
         if (organizadorRepository.existsById(dto.getCedula())) {
             throw new RuntimeException("Ya existe un organizador con esta cédula.");
         }
+        Rol rol= rolRepository.findByIdRol(dto.getIdRol())
+                .orElseThrow(()-> new RuntimeException("Rol no existe"));
 
         Organizador organizador = new Organizador();
 
@@ -100,7 +106,7 @@ public class OrganizadorService {
         organizador.setApellidoOrg(dto.getApellidos());
         organizador.setTelefonoOrg(dto.getTelefono());
         organizador.setEmailOrg(dto.getEmail());
-        organizador.setIdRol(2);
+        organizador.setRol(rol);
         organizador.setActivo(true);
 
         //generar codigo invitado
@@ -170,7 +176,7 @@ public class OrganizadorService {
                 org.getApellidoOrg(),
                 org.getEmailOrg(),
                 org.getCodigoInvitado(),
-                org.getIdRol(),
+                org.getRol().getIdRol(),
                 org.getActivo()
         );
     }
