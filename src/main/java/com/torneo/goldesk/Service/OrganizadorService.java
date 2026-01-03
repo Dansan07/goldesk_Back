@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrganizadorService {
@@ -17,15 +18,17 @@ public class OrganizadorService {
     private final OrganizadorRepository organizadorRepository;
     private final PasswordEncoder passwordEncoder;
     private final MessageService messageService;
+    private final JwtService jwtService;
 
-    public OrganizadorService(OrganizadorRepository organizadorRepository, PasswordEncoder passwordEncoder, MessageService messageService) {
+    public OrganizadorService(OrganizadorRepository organizadorRepository, PasswordEncoder passwordEncoder, MessageService messageService, JwtService jwtService) {
         this.organizadorRepository = organizadorRepository;
         this.passwordEncoder = passwordEncoder;
         this.messageService = messageService;
+        this.jwtService = jwtService;
     }
 
     //valida el inicio de sesión del organizador
-    public OrganizadorResponseDTO login(LoginRequestDTO loginDTO) {
+    public Map<String, Object> login(LoginRequestDTO loginDTO) {
         // 1. Buscamos al organizador por email (o cédula)
         Organizador org = organizadorRepository.findByEmailOrg(loginDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
@@ -41,8 +44,14 @@ public class OrganizadorService {
             throw new RuntimeException("El usuario se encuentra inhabilitado");
         }
 
-        // 4. Devolvemos el DTO
-        return convertirADTO(org);
+        //4. generar token
+        String token = jwtService.generarToken(org.getCedulaOrg(),org.getIdRol());
+
+        // 5. Retornar tanto el perfil como el token
+        return Map.of(
+                "token", token,
+                "perfil", convertirADTO(org)
+        );
     }
 
     public void activarOrganizador(String cedula) {

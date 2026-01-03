@@ -10,6 +10,7 @@ import com.torneo.goldesk.dto.actores.organizador.OrganizadorUpdateDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,8 +32,7 @@ public class OrganizadorController {
     @PostMapping("/login")
     public ResponseEntity<?> iniciarSesion(@Valid @RequestBody LoginRequestDTO loginDto) {
         try {
-            OrganizadorResponseDTO perfil = organizadorService.login(loginDto);
-            return ResponseEntity.ok(perfil);
+            return ResponseEntity.ok(organizadorService.login(loginDto));
         } catch (RuntimeException e) {
             // Retornamos 401 si falla la autenticación
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -41,7 +41,15 @@ public class OrganizadorController {
 
     //busca los torneos que le perteneces a su respectivo organizador
     @GetMapping("/{cedula}/torneos")
-    public ResponseEntity<List<Map<String, Object>>> obtenerTorneosDelOrganizador(@PathVariable String cedula) {
+    public ResponseEntity<?> obtenerTorneosDelOrganizador(@PathVariable String cedula) {
+        // Extraer la cédula del contexto de seguridad (la que viene en el JWT)
+        String cedulaToken = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!cedulaToken.equals(cedula)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("No tienes Permiso para acceder a los datos de otro organizador");
+        }
+
         List<Map<String, Object>> torneos = panelOrganizadorService.listarTorneosPorOrganizador(cedula);
 
         // Si no tiene torneos, enviamos 204 (No Content), de lo contrario 200 (OK)
