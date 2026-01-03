@@ -20,7 +20,7 @@ public interface TraspasoRepository extends JpaRepository<Traspaso, Integer> {
     // Para ver las PENDIENTES de los torneos que gestiona ese organizador
     // (Asumiendo que el Organizador tiene una relación con sus Torneos)
     @Query("SELECT t FROM Traspaso t WHERE t.estado = :estado AND t.torneoEquipoSolicita.torneo.organizador.cedulaOrg = :cedulaOrg")
-    List<TraspasoResponseDTO> findPendientesPorOrganizador(@Param("estado") String estado, @Param("cedulaOrg") String cedulaOrg);
+    List<Traspaso> findPendientesPorOrganizador(@Param("estado") String estado, @Param("cedulaOrg") String cedulaOrg);
 
     //verificar si existe una solicitud para no duplicarla
     boolean existsByJugador_IdJugadorAndEstado(Integer idJugador, String estado);

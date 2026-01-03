@@ -12,10 +12,12 @@ public class TraspasoResponseDTO {
     private String asunto;
     private String estado;
     private LocalDateTime fechaSolicitud;
+    private LocalDateTime fechaRespuesta;
+
 
     //constructor
 
-    public TraspasoResponseDTO(Integer idTraspaso, String nombreJugador, String cedulaJugador, String equipoOrigen, String equipoDestino, String asunto, String estado, LocalDateTime fechaSolicitud) {
+    public TraspasoResponseDTO(Integer idTraspaso, String nombreJugador, String cedulaJugador, String equipoOrigen, String equipoDestino, String asunto, String estado, LocalDateTime fechaSolicitud, LocalDateTime fechaRespuesta) {
         this.idTraspaso = idTraspaso;
         this.nombreJugador = nombreJugador;
         this.cedulaJugador = cedulaJugador;
@@ -24,9 +26,15 @@ public class TraspasoResponseDTO {
         this.asunto = asunto;
         this.estado = estado;
         this.fechaSolicitud = fechaSolicitud;
+        this.fechaRespuesta = fechaRespuesta;
     }
 
     //getters and setters
+
+
+    public LocalDateTime getFechaRespuesta() {
+        return fechaRespuesta;
+    }
 
     public Integer getIdTraspaso() {
         return idTraspaso;

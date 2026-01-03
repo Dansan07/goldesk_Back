@@ -11,6 +11,7 @@ import com.torneo.goldesk.dto.traspaso.TraspasoCreateDTO;
 import com.torneo.goldesk.dto.traspaso.TraspasoResponseDTO;
 import com.torneo.goldesk.dto.traspaso.TraspasoUpdateDTO;
 import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,10 +39,16 @@ public class TraspasoService {
     }
 
     @Transactional
-    public void procesarAprobacion(Integer idTraspaso) {
+    public TraspasoResponseDTO aprobarSolicitud(Integer idTraspaso) {
         // 1. Obtener la solicitud con todos sus datos
         Traspaso solicitud = traspasoRepository.findById(idTraspaso)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+
+        String cedulaOrg =(String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!solicitud.getOrganizador().getCedulaOrg().equals(cedulaOrg)){
+            throw new RuntimeException("No está autorizado para Procesar esta solicitud");
+        }
 
         if (!"PENDIENTE".equals(solicitud.getEstado())) {
             throw new RuntimeException("La solicitud ya ha sido procesada.");
@@ -63,7 +70,8 @@ public class TraspasoService {
         // Accedemos al registro que vincula al jugador con el equipo de origen
         TorneoEquipoJugador registroAntiguo=torneoEquipoJugadorRepository.findByJugadorAndTorneoEquipo(solicitud.getJugador(),solicitud.getTorneoEquipoActual())
                 .orElseThrow(()-> new RuntimeException("No se encontró Registro"));
-        registroAntiguo.setActivo(false); // O registroAntiguo.setActivo(false);
+        registroAntiguo.setActivo(false);
+
         // Guardamos el cambio en el repositorio correspondiente
         torneoEquipoJugadorRepository.save(registroAntiguo);
 
@@ -81,6 +89,23 @@ public class TraspasoService {
         solicitud.setEstado("APROBADO");
         solicitud.setFechaRespuesta(LocalDateTime.now());
         traspasoRepository.save(solicitud);
+
+        String nombreEquipoOrigen = solicitud.getTorneoEquipoActual().getNombrePersonalizado()==null?
+                solicitud.getTorneoEquipoActual().getEquipo().getNombreEquipo(): solicitud.getTorneoEquipoActual().getNombrePersonalizado();
+        String nombreEquipoDestino =solicitud.getTorneoEquipoSolicita().getNombrePersonalizado()==null?
+                solicitud.getTorneoEquipoSolicita().getEquipo().getNombreEquipo(): solicitud.getTorneoEquipoSolicita().getNombrePersonalizado();
+
+        return new TraspasoResponseDTO(
+                idTraspaso,
+                solicitud.getJugador().getNombreJugador(),
+                solicitud.getJugador().getCedulaJug(),
+                nombreEquipoOrigen,
+                nombreEquipoDestino,
+                solicitud.getAsunto(),
+                solicitud.getEstado(),
+                solicitud.getFechaRespuesta(),
+                solicitud.getFechaRespuesta()
+        );
     }
 
     @Transactional
@@ -114,7 +139,8 @@ public class TraspasoService {
                 s.getTorneoEquipoSolicita().getEquipo().getNombreEquipo(),
                 s.getAsunto(),
                 s.getEstado(),
-                s.getFechaSolicitud()
+                s.getFechaSolicitud(),
+                s.getFechaRespuesta()
         )).toList();
     }
 
@@ -152,7 +178,7 @@ public class TraspasoService {
                 .orElseThrow(()-> new RuntimeException("El equipo de destino no existe."));
         // Validación extra: ¿El equipo nuevo pertenece al mismo torneo que el actual?
         if (!equipoSolicita.getTorneo().getIdTorneo().equals(inscripcionActual.getTorneoEquipo().getTorneo().getIdTorneo())) {
-            throw new RuntimeException("El equipo de destino debe pertenecer al mismo torneo actual.");
+            throw new RuntimeException("El equipo de destino debe pertenecer al mismo torneo actual. No es necesario Realizar Traspaso.");
         }
         nuevaSolicitud.setTorneoEquipoSolicita(equipoSolicita);
 
@@ -174,32 +200,21 @@ public class TraspasoService {
     }
 
     @Transactional
-    public String responderSolicitud(TraspasoUpdateDTO dto) {
+    public String rechazarSolicitud(TraspasoUpdateDTO dto) {
         Traspaso solicitud = traspasoRepository.findByIdTraspaso(dto.getIdTraspaso())
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
-        solicitud.setEstado(dto.getEstado());
+        // Sugerencia: Añadir validación de seguridad aquí también
+        String cedulaOrg = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!solicitud.getOrganizador().getCedulaOrg().equals(cedulaOrg)) {
+            throw new RuntimeException("No está autorizado para rechazar esta solicitud");
+        }
+
+        solicitud.setEstado("RECHAZADO");
         solicitud.setObservaciones(dto.getObservaciones());
         solicitud.setFechaRespuesta(LocalDateTime.now());
 
-        if (dto.getEstado().equalsIgnoreCase("APROBADO")) {
-            // 1. Desactivar en equipo actual
-            TorneoEquipoJugador antigua = torneoEquipoJugadorRepository
-                    .findByJugadorAndTorneoEquipo(solicitud.getJugador(), solicitud.getTorneoEquipoActual())
-                    .orElseThrow(() -> new RuntimeException("No se encontró la inscripción original del jugador."));
-            antigua.setActivo(false);
-
-            // 2. Inscribir en nuevo equipo
-            TorneoEquipoJugador nueva = new TorneoEquipoJugador();
-            nueva.setJugador(solicitud.getJugador());
-            nueva.setTorneoEquipo(solicitud.getTorneoEquipoSolicita());
-            nueva.setActivo(true);
-
-            torneoEquipoJugadorRepository.save(antigua);
-            torneoEquipoJugadorRepository.save(nueva);
-        }
-
         traspasoRepository.save(solicitud);
-        return "Traspaso " + dto.getEstado() + " correctamente.";
+        return "La solicitud de Traspaso ha sido Rechazado.";
     }
 }

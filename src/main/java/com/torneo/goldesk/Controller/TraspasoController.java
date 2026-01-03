@@ -1,6 +1,5 @@
 package com.torneo.goldesk.Controller;
 
-import com.torneo.goldesk.Entity.Traspaso;
 import com.torneo.goldesk.Service.PdfGeneratorService;
 import com.torneo.goldesk.Service.TraspasoService;
 import com.torneo.goldesk.dto.traspaso.TraspasoCreateDTO;
@@ -79,11 +78,18 @@ public class TraspasoController {
         return ResponseEntity.ok(traspasoService.listarPorEstadoYOrganizador(estado));
     }
 
-    // 4. Finalizar el proceso (Aprobar/Rechazar)
-    @PatchMapping("/responder/{idTraspaso}")
+    // 4. Finalizar el proceso (Aprobar)
+    @PatchMapping("/aprobar/{idTraspaso}")
     @PreAuthorize("hasRole('ROLE_ORGANIZADOR')")
-    public ResponseEntity<String> responder(@RequestBody TraspasoUpdateDTO dto) {
-        return ResponseEntity.ok(traspasoService.responderSolicitud(dto));
+    public ResponseEntity<?> aprobarSolicitud(@PathVariable Integer idTraspaso) {
+        return ResponseEntity.ok(traspasoService.aprobarSolicitud(idTraspaso));
+    }
+
+    // 4. Finalizar el proceso (Aprobar)
+    @PatchMapping("/rechazar")
+    @PreAuthorize("hasRole('ROLE_ORGANIZADOR')")
+    public ResponseEntity<?> rechazarSolicitud(@RequestBody TraspasoUpdateDTO dto) {
+        return ResponseEntity.ok(traspasoService.rechazarSolicitud(dto));
     }
 
 }
