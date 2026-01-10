@@ -1,7 +1,7 @@
 package com.torneo.goldesk.Config;
 
 import com.torneo.goldesk.Exception.AuthException;
-import com.torneo.goldesk.Service.JwtService;
+import com.torneo.goldesk.Service.Authenticator.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

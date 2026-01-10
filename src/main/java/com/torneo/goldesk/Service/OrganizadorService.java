@@ -4,7 +4,8 @@ import com.torneo.goldesk.Entity.Organizador;
 import com.torneo.goldesk.Entity.Rol;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
 import com.torneo.goldesk.Repository.RolRepository;
-import com.torneo.goldesk.dto.actores.organizador.LoginRequestDTO;
+import com.torneo.goldesk.Service.Authenticator.JwtService;
+import com.torneo.goldesk.dto.login.LoginRequestDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorCreateDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorUpdateDTO;
@@ -12,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrganizadorService {
@@ -29,33 +29,6 @@ public class OrganizadorService {
         this.passwordEncoder = passwordEncoder;
         this.messageService = messageService;
         this.jwtService = jwtService;
-    }
-
-    //valida el inicio de sesión del organizador
-    public Map<String, Object> login(LoginRequestDTO loginDTO) {
-        // 1. Buscamos al organizador por email (o cédula)
-        Organizador org = organizadorRepository.findByEmailOrg(loginDTO.getEmail())
-                .orElseThrow(() -> new RuntimeException("Credenciales incorrectas"));
-
-        // 2. Validamos la contraseña (aquí comparamos el hash)
-        // !org.getPassHashOrg().equals(logintDTO.getPassword())
-        if (!passwordEncoder.matches(loginDTO.getPassword(), org.getPassHashOrg())) {
-            throw new RuntimeException("Credenciales incorrectas");
-        }
-
-        // 3. Validamos que esté activo
-        if (!org.getActivo()) {
-            throw new RuntimeException("El usuario se encuentra inhabilitado");
-        }
-
-        //4. generar token
-        String token = jwtService.generarToken(org.getCedulaOrg(),org.getRol().getTipoRol());
-
-        // 5. Retornar tanto el perfil como el token
-        return Map.of(
-                "token", token,
-                "perfil", convertirADTO(org)
-        );
     }
 
     public void activarOrganizador(String cedula) {
@@ -168,7 +141,7 @@ public class OrganizadorService {
         }
         return sb.toString();
     }
-    private OrganizadorResponseDTO convertirADTO(Organizador org) {
+    public OrganizadorResponseDTO convertirADTO(Organizador org) {
         return new OrganizadorResponseDTO(
                 org.getCedulaOrg(),
                 org.getTelefonoOrg(),
@@ -176,7 +149,7 @@ public class OrganizadorService {
                 org.getApellidoOrg(),
                 org.getEmailOrg(),
                 org.getCodigoInvitado(),
-                org.getRol().getIdRol(),
+                org.getRol().getTipoRol(),
                 org.getActivo()
         );
     }

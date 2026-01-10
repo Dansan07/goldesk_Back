@@ -1,4 +1,4 @@
-package com.torneo.goldesk.dto.actores.organizador;
+package com.torneo.goldesk.dto.login;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

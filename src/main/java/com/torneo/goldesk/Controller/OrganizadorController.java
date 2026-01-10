@@ -3,7 +3,7 @@ package com.torneo.goldesk.Controller;
 import com.torneo.goldesk.Service.OrganizadorService;
 import com.torneo.goldesk.Service.PanelOrganizadorService;
 import com.torneo.goldesk.dto.PanelOrganizador.VistaTorneoEquiposDTO;
-import com.torneo.goldesk.dto.actores.organizador.LoginRequestDTO;
+import com.torneo.goldesk.dto.login.LoginRequestDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorCreateDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorUpdateDTO;
@@ -27,17 +27,6 @@ public class OrganizadorController {
     public OrganizadorController(OrganizadorService organizadorService, PanelOrganizadorService panelOrganizadorService) {
         this.organizadorService = organizadorService;
         this.panelOrganizadorService = panelOrganizadorService;
-    }
-
-    //valida el inicio de sesión del organizador
-    @PostMapping("/login")
-    public ResponseEntity<?> iniciarSesion(@Valid @RequestBody LoginRequestDTO loginDto) {
-        try {
-            return ResponseEntity.ok(organizadorService.login(loginDto));
-        } catch (RuntimeException e) {
-            // Retornamos 401 si falla la autenticación
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
     }
 
     //busca los torneos que le perteneces a su respectivo organizador

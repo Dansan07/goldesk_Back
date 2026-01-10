@@ -1,4 +1,4 @@
-package com.torneo.goldesk.Service;
+package com.torneo.goldesk.Service.Authenticator;
 
 import com.torneo.goldesk.Config.JwtConfig;
 import io.jsonwebtoken.Claims;
@@ -17,9 +17,9 @@ public class JwtService {
         this.jwtConfig = jwtConfig;
     }
 
-    public String generarToken(String cedula, String nombreRol) {
+    public String generarToken(String identificador, String nombreRol) {
         return Jwts.builder()
-                .setSubject(cedula)
+                .setSubject(identificador)
                 .claim("rol", nombreRol)
                 .setIssuedAt(new Date())
                 .setExpiration(
@@ -39,5 +39,9 @@ public class JwtService {
 
     public String extraerCedula(String token) {
         return extraerClaims(token).getSubject();
+    }
+
+    public String extraerRol(String token) {
+        return extraerClaims(token).get("rol", String.class);
     }
 }

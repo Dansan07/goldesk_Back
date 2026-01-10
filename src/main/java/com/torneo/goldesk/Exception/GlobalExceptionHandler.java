@@ -1,6 +1,6 @@
 package com.torneo.goldesk.Exception;
 
-import com.torneo.goldesk.dto.errorManage.ErrorResponseDTO;
+import com.torneo.goldesk.dto.errorManager.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

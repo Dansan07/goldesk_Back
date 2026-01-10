@@ -16,4 +16,6 @@ public interface OrganizadorRepository extends JpaRepository<Organizador,String>
     boolean existsByCodigoInvitado(String codigoInvitado);
 
     Optional<Organizador> findByCedulaOrg(String cedulaOrg);
+
+    Optional<Organizador> findByCodigoInvitado(String codigoInvitado);
 }

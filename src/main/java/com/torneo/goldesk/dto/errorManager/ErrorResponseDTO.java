@@ -1,4 +1,4 @@
-package com.torneo.goldesk.dto.errorManage;
+package com.torneo.goldesk.dto.errorManager;
 
 public record ErrorResponseDTO (
         int status,

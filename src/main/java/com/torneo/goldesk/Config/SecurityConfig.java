@@ -1,6 +1,6 @@
 package com.torneo.goldesk.Config;
 
-import com.torneo.goldesk.Service.JwtService;
+import com.torneo.goldesk.Service.Authenticator.JwtService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth-> auth
                         .requestMatchers("/api/organizadores/login").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/organizadores/**").hasAnyRole("ADMIN", "ORGANIZADOR")
                         .anyRequest().authenticated()
                 ).addFilterBefore(
