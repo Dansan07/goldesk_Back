@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class PartidoCreateDTO {
+    private Integer idTorneo;
     private Integer idEquipoLocal;
     private Integer idEquipoVisitante;
     private LocalDate fecha;
@@ -16,6 +17,10 @@ public class PartidoCreateDTO {
 
     public boolean isConfirmarDuplicado() {
         return confirmarDuplicado;
+    }
+
+    public Integer getIdTorneo() {
+        return idTorneo;
     }
 
     public Integer getIdEquipoLocal() {

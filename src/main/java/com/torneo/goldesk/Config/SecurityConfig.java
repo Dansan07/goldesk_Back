@@ -47,7 +47,6 @@ public class SecurityConfig {
         http.csrf(csrf-> csrf.disable())
                 .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth-> auth
-                        .requestMatchers("/api/organizadores/login").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/organizadores/**").hasAnyRole("ADMIN", "ORGANIZADOR")
                         .anyRequest().authenticated()

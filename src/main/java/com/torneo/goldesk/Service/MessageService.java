@@ -1,5 +1,6 @@
 package com.torneo.goldesk.Service;
 
+import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -8,8 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageService {
 
-    @Autowired
-    private JavaMailSender mailSender;
+
+    private final JavaMailSender mailSender;
+
+    public MessageService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     public void enviarCredencialesOrg(String destinatario, String nombre, String password) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -20,6 +25,19 @@ public class MessageService {
                 "Usuario: " + destinatario + "\n" +
                 "Contraseña temporal: " + password + "\n\n" +
                 "Por seguridad, te recomendamos cambiar tu contraseña al ingresar.");
+        mailSender.send(message);
+    }
+
+    public void actualizarPasswordOrg(OrganizadorResponseDTO dto, String password){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(dto.getEmail());
+        message.setSubject("Goldesk - Recuperación de Contraseña");
+        message.setText("Hola " + dto.getNombre() + ",\n\n" +
+                "Hemos recibido una solicitud para recuperar el acceso a tu cuenta.\n\n" +
+                "Usuario: " + dto.getEmail() + "\n" +
+                "Contraseña temporal: " + password + "\n\n" +
+                "Por seguridad, te recomendamos cambiar esta contraseña inmediatamente después de iniciar sesión.\n" +
+                "Si no realizaste esta solicitud, por favor ignora este mensaje o contacta con soporte.");
         mailSender.send(message);
     }
 

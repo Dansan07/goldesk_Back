@@ -7,8 +7,10 @@ import com.torneo.goldesk.Repository.AccesosExternosRepository;
 import com.torneo.goldesk.Repository.EquipoRepository;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
 import com.torneo.goldesk.Repository.RolRepository;
+import com.torneo.goldesk.Service.MessageService;
 import com.torneo.goldesk.Service.OrganizadorService;
 import com.torneo.goldesk.dto.login.LoginRequestDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +28,9 @@ public class AuthService {
     private final OrganizadorService organizadorService;
     private final PasswordEncoder passwordEncoder;
     private final RolRepository rolRepository;
+    private final MessageService messageService;
 
-    public AuthService(AccesosExternosRepository accesosExternosRepository, JwtService jwtService, EquipoRepository equipoRepository, OrganizadorRepository organizadorRepository, OrganizadorService organizadorService, PasswordEncoder passwordEncoder, RolRepository rolRepository) {
+    public AuthService(AccesosExternosRepository accesosExternosRepository, JwtService jwtService, EquipoRepository equipoRepository, OrganizadorRepository organizadorRepository, OrganizadorService organizadorService, PasswordEncoder passwordEncoder, RolRepository rolRepository, MessageService messageService) {
         this.accesosExternosRepository = accesosExternosRepository;
         this.jwtService = jwtService;
         this.equipoRepository = equipoRepository;
@@ -35,6 +38,7 @@ public class AuthService {
         this.organizadorService = organizadorService;
         this.passwordEncoder = passwordEncoder;
         this.rolRepository = rolRepository;
+        this.messageService = messageService;
     }
 
     public Map<String, Object> loginPorCodigo(String codigo) {
@@ -124,5 +128,23 @@ public class AuthService {
                 "token", token,
                 "perfil", organizadorService.convertirADTO(org)
         );
+    }
+
+    @Transactional
+    public void actualizarPasswordOrg(String email) {
+        Organizador organizador= organizadorRepository.findByEmailOrg(email)
+                .orElseThrow(()->new RuntimeException("El correo electrónico no existe"));
+
+        //genera, encripta y guarda passwordTemporal
+        String passwordTemporal=organizadorService
+                .generarCodigoInvitado(7).toUpperCase();
+
+        String passwordHacheada = passwordEncoder.encode(passwordTemporal);
+        organizador.setPassHashOrg(passwordHacheada);
+        organizadorRepository.save(organizador);
+
+        messageService.actualizarPasswordOrg(
+                organizadorService.convertirADTO(organizador),
+                passwordTemporal);
     }
 }

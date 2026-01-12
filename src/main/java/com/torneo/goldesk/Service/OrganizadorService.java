@@ -5,7 +5,6 @@ import com.torneo.goldesk.Entity.Rol;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
 import com.torneo.goldesk.Repository.RolRepository;
 import com.torneo.goldesk.Service.Authenticator.JwtService;
-import com.torneo.goldesk.dto.login.LoginRequestDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorCreateDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorUpdateDTO;
@@ -21,14 +20,12 @@ public class OrganizadorService {
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
     private final MessageService messageService;
-    private final JwtService jwtService;
 
     public OrganizadorService(OrganizadorRepository organizadorRepository, RolRepository rolRepository, PasswordEncoder passwordEncoder, MessageService messageService, JwtService jwtService) {
         this.organizadorRepository = organizadorRepository;
         this.rolRepository = rolRepository;
         this.passwordEncoder = passwordEncoder;
         this.messageService = messageService;
-        this.jwtService = jwtService;
     }
 
     public void activarOrganizador(String cedula) {
@@ -130,7 +127,7 @@ public class OrganizadorService {
                 .map(this::convertirADTO)
                 .toList();
     }
-    private String generarCodigoInvitado(int longitud) {
+    public String generarCodigoInvitado(int longitud) {
         String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         java.security.SecureRandom random = new java.security.SecureRandom();
         StringBuilder sb = new StringBuilder(longitud);
@@ -144,9 +141,9 @@ public class OrganizadorService {
     public OrganizadorResponseDTO convertirADTO(Organizador org) {
         return new OrganizadorResponseDTO(
                 org.getCedulaOrg(),
-                org.getTelefonoOrg(),
                 org.getNombreOrg(),
                 org.getApellidoOrg(),
+                org.getTelefonoOrg(),
                 org.getEmailOrg(),
                 org.getCodigoInvitado(),
                 org.getRol().getTipoRol(),

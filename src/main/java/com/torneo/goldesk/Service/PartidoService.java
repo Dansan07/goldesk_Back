@@ -186,21 +186,23 @@ public class PartidoService {
 
     public PartidoResDuplicateDTO programarPartido(PartidoCreateDTO dto) {
 
-        Optional<TorneoEquipo> localOpt= torneoEquipoRepository.findById(dto.getIdEquipoLocal());
-        Optional<TorneoEquipo> visitantelOpt= torneoEquipoRepository.findById(dto.getIdEquipoVisitante());
+        Optional<TorneoEquipo> localOpt= torneoEquipoRepository.findByTorneo_IdTorneoAndEquipo_IdEquipo(dto.getIdTorneo(),dto.getIdEquipoLocal());
+        Optional<TorneoEquipo> visitantelOpt= torneoEquipoRepository.findByTorneo_IdTorneoAndEquipo_IdEquipo(dto.getIdTorneo(),dto.getIdEquipoVisitante());
 
         if (localOpt.isEmpty()){
             return new PartidoResDuplicateDTO("ERROR","Equipo local no encontrado");
         }
         if (visitantelOpt.isEmpty()){
-            return new PartidoResDuplicateDTO("ERROR","Equipo visitante no encontrado");
+            return new PartidoResDuplicateDTO("ERROR",
+                    "Equipo visitante no encontrado");
         }
 
         TorneoEquipo local=localOpt.get();
         TorneoEquipo visitante=visitantelOpt.get();
 
         if (local.getIdTorneoEquipo().equals(visitante.getIdTorneoEquipo())) {
-            return new PartidoResDuplicateDTO("ERROR", "Un equipo no puede jugar contra sí mismo");
+            return new PartidoResDuplicateDTO("ERROR",
+                    "Un equipo no puede jugar contra sí mismo");
         }
 
         // --- VALIDACIÓN DE ENFRENTAMIENTO PREVIO ---

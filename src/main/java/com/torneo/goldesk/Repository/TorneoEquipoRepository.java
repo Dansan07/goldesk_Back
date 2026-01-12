@@ -1,6 +1,5 @@
 package com.torneo.goldesk.Repository;
 
-import com.torneo.goldesk.Entity.Torneo;
 import com.torneo.goldesk.Entity.TorneoEquipo;
 import org.springframework.data.jpa.repository.JpaRepository;
 

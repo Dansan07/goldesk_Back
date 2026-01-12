@@ -30,7 +30,7 @@ public class PartidoController {
         return ResponseEntity.ok(partidoService.abrirPlanillaDigital(idPartido));
     }
 
-    @PostMapping("/{id}/iniciar")
+    @PostMapping("/{idPartido}/iniciar")
     public ResponseEntity<String> iniciarPartido(@PathVariable Integer idPartido) {
         try {
             partidoService.iniciarPartido(idPartido);
@@ -39,7 +39,7 @@ public class PartidoController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/programar-partido")
     public ResponseEntity<PartidoResDuplicateDTO> programarPartido(@RequestBody PartidoCreateDTO dto){
         PartidoResDuplicateDTO mensaje = partidoService.programarPartido(dto);
         return ResponseEntity.ok(mensaje);
