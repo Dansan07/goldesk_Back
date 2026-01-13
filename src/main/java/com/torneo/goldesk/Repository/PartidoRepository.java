@@ -2,12 +2,14 @@ package com.torneo.goldesk.Repository;
 
 import com.torneo.goldesk.Entity.Partido;
 import com.torneo.goldesk.Entity.TorneoEquipo;
+import com.torneo.goldesk.dto.partido.PartidoHistorialResponseDTO;
 import com.torneo.goldesk.dto.tablaPosiciones.TablaPosicionesDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,4 +47,51 @@ public interface PartidoRepository extends JpaRepository<Partido,Integer> {
                                  @Param("fase") String fase);
 
     Optional<Partido> findByIdPartido(Integer idPartido);
+
+    // 1. Historial por Torneo (La más común para tu Spinner de Torneos)
+    @Query("SELECT new com.torneo.goldesk.dto.partido.PartidoHistorialResponseDTO(" +
+            "p.idPartido, " +
+            "p.local.idTorneoEquipo, " +      // Extraemos el ID (Integer) para el DTO
+            "p.local.nombrePersonalizado, " + // Acceso directo al String
+            "p.visitante.idTorneoEquipo, " +  // Extraemos el ID (Integer) para el DTO
+            "p.visitante.nombrePersonalizado, " +
+            "p.fechaPartido, " +
+            "p.horaPartido, " +
+            "p.nombreCancha, " +
+            "p.golesLocal, " +
+            "p.golesVisitante, " +
+            "p.penalesLocal, " +
+            "p.penalesVisitante, " +
+            "p.faseTorneo, " +
+            "p.estado) " +
+            "FROM Partido p WHERE " +
+            "p.local.torneo.idTorneo = :idTorneo " +
+            "OR p.visitante.torneo.idTorneo = :idTorneo " +
+            "ORDER BY p.fechaPartido DESC, p.horaPartido DESC")
+    List<PartidoHistorialResponseDTO> findByTorneoOrderByFechaDesc(@Param("idTorneo") Integer idTorneo);
+
+    // 2. Historial por Nombre de Equipo (Para tu buscador de texto)
+    @Query("SELECT new com.torneo.goldesk.dto.partido.PartidoHistorialResponseDTO(" +
+            "p.idPartido, " +
+            "p.local.idTorneoEquipo, p.local.nombrePersonalizado, " +
+            "p.visitante.idTorneoEquipo, p.visitante.nombrePersonalizado, " +
+            "p.fechaPartido, p.horaPartido, p.nombreCancha, " +
+            "p.golesLocal, p.golesVisitante, p.penalesLocal, p.penalesVisitante, " +
+            "p.faseTorneo, p.estado) " +
+            "FROM Partido p WHERE " +
+            "(p.local.nombrePersonalizado LIKE %:nombre% OR p.visitante.nombrePersonalizado LIKE %:nombre%) " +
+            "ORDER BY p.fechaPartido DESC, p.horaPartido DESC")
+    List<PartidoHistorialResponseDTO> findByNombreEquipoOrderByFechaDesc(@Param("nombre") String nombre);
+
+    // 3. Historial por Rango de Fechas
+    @Query("SELECT new com.torneo.goldesk.dto.partido.PartidoHistorialResponseDTO(" +
+            "p.idPartido, " +
+            "p.local.idTorneoEquipo, p.local.nombrePersonalizado, " +
+            "p.visitante.idTorneoEquipo, p.visitante.nombrePersonalizado, " +
+            "p.fechaPartido, p.horaPartido, p.nombreCancha, " +
+            "p.golesLocal, p.golesVisitante, p.penalesLocal, p.penalesVisitante, " +
+            "p.faseTorneo, p.estado) " +
+            "FROM Partido p WHERE p.fechaPartido BETWEEN :inicio AND :fin " +
+            "ORDER BY p.fechaPartido DESC, p.horaPartido DESC")
+    List<PartidoHistorialResponseDTO> findByRangoFechasOrderByFechaDesc(@Param("inicio") LocalDate inicio, @Param("fin") LocalDate fin);
 }

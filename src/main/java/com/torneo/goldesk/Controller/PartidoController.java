@@ -1,6 +1,7 @@
 package com.torneo.goldesk.Controller;
 
 import com.torneo.goldesk.Service.PartidoService;
+import com.torneo.goldesk.dto.partido.FiltroHistorialPartidos;
 import com.torneo.goldesk.dto.partido.PartidoCreateDTO;
 import com.torneo.goldesk.dto.partido.PartidoResDuplicateDTO;
 import com.torneo.goldesk.dto.planillaDigital.PlanillaDigitalDTO;
@@ -16,6 +17,12 @@ public class PartidoController {
 
     public PartidoController(PartidoService partidoService) {
         this.partidoService = partidoService;
+    }
+
+    @GetMapping("/historial-partidos")
+    public ResponseEntity<?> listaPartidosPorTorneo(@ModelAttribute FiltroHistorialPartidos filtro){
+        System.out.println("Filtro recibido en Backend: " + filtro.getIdTorneo());
+        return ResponseEntity.ok(partidoService.listaPartidosPorTorneo(filtro));
     }
 
     @PatchMapping("/participacion/{idParticipacion}/dorsal")
@@ -38,7 +45,6 @@ public class PartidoController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
     @PostMapping("/programar-partido")
     public ResponseEntity<PartidoResDuplicateDTO> programarPartido(@RequestBody PartidoCreateDTO dto){
         PartidoResDuplicateDTO mensaje = partidoService.programarPartido(dto);

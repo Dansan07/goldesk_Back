@@ -2,7 +2,9 @@ package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.*;
 import com.torneo.goldesk.Repository.*;
+import com.torneo.goldesk.dto.partido.FiltroHistorialPartidos;
 import com.torneo.goldesk.dto.partido.PartidoCreateDTO;
+import com.torneo.goldesk.dto.partido.PartidoHistorialResponseDTO;
 import com.torneo.goldesk.dto.partido.PartidoResDuplicateDTO;
 import com.torneo.goldesk.dto.planillaDigital.JugadorPlanillaDTO;
 import com.torneo.goldesk.dto.planillaDigital.PlanillaDigitalDTO;
@@ -33,6 +35,20 @@ public class PartidoService {
         this.participacionJugadorRepository = participacionJugadorRepository;
         this.pagoArbitrajeRepository = pagoArbitrajeRepository;
         this.torneoRepository = torneoRepository;
+    }
+
+    public List<PartidoHistorialResponseDTO> listaPartidosPorTorneo(FiltroHistorialPartidos filtro){
+
+        if (filtro.getFechaInicio()!=null && filtro.getFechaFin()!=null){
+            return partidoRepository.findByRangoFechasOrderByFechaDesc(
+                    filtro.getFechaInicio(),
+                    filtro.getFechaFin()
+            );
+        }
+        if (filtro.getNombreEquipo()!=null && !filtro.getNombreEquipo().isEmpty()){
+            return partidoRepository.findByNombreEquipoOrderByFechaDesc(filtro.getNombreEquipo());
+        }
+        return partidoRepository.findByTorneoOrderByFechaDesc(filtro.getIdTorneo());
     }
 
     public PlanillaDigitalDTO abrirPlanillaDigital(Integer idPartido) {

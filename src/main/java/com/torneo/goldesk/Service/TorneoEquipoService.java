@@ -31,11 +31,11 @@ public class TorneoEquipoService {
     public List<Map<String, Object>> listarNombresEquiposPorTorneo(Integer idTorneo) {
         return torneoEquipoRepository.findByTorneo_IdTorneoAndEquipoActivoTrue(idTorneo)
                 .stream()
-                .map(te -> Map.<String, Object>of("idEquipo",te.getEquipo().getIdEquipo(),
-                                "nombreEquipo",
-                        te.getNombrePersonalizado()==null?
-                        te.getEquipo().getNombreEquipo():
-                        te.getNombrePersonalizado()))
+                .map(te -> Map.<String, Object>of(
+                        "idTorneoEquipo",te.getIdTorneoEquipo(),
+                        "nombreEquipo",te.getNombrePersonalizado()==null?
+                                te.getEquipo().getNombreEquipo():
+                                te.getNombrePersonalizado()))
                 .toList();
     }
 
