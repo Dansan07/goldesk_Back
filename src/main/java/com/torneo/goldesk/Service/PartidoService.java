@@ -2,6 +2,7 @@ package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.*;
 import com.torneo.goldesk.Repository.*;
+import com.torneo.goldesk.dto.gol.GolResponseDTO;
 import com.torneo.goldesk.dto.partido.FiltroHistorialPartidos;
 import com.torneo.goldesk.dto.partido.PartidoCreateDTO;
 import com.torneo.goldesk.dto.partido.PartidoHistorialResponseDTO;
@@ -26,17 +27,20 @@ public class PartidoService {
     private final ParticipacionJugadorRepository participacionJugadorRepository;
     private final PagoArbitrajeRepository pagoArbitrajeRepository;
     private final TorneoRepository torneoRepository;
+    private final GolRepository golRepository;
 
 
-    public PartidoService(PartidoRepository partidoRepository, TorneoEquipoRepository torneoEquipoRepository, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository, ParticipacionJugadorRepository participacionJugadorRepository, PagoArbitrajeRepository pagoArbitrajeRepository, TorneoRepository torneoRepository) {
+    public PartidoService(PartidoRepository partidoRepository, TorneoEquipoRepository torneoEquipoRepository, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository, ParticipacionJugadorRepository participacionJugadorRepository, PagoArbitrajeRepository pagoArbitrajeRepository, TorneoRepository torneoRepository, GolRepository golRepository) {
         this.partidoRepository = partidoRepository;
         this.torneoEquipoRepository = torneoEquipoRepository;
         this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
         this.participacionJugadorRepository = participacionJugadorRepository;
         this.pagoArbitrajeRepository = pagoArbitrajeRepository;
         this.torneoRepository = torneoRepository;
+        this.golRepository = golRepository;
     }
 
+    //Crea la lista completa de todos los partidos por torneo
     public List<PartidoHistorialResponseDTO> listaPartidosPorTorneo(FiltroHistorialPartidos filtro){
 
         if (filtro.getFechaInicio()!=null && filtro.getFechaFin()!=null){
@@ -51,6 +55,7 @@ public class PartidoService {
         return partidoRepository.findByTorneoOrderByFechaDesc(filtro.getIdTorneo());
     }
 
+    @Transactional
     public PlanillaDigitalDTO abrirPlanillaDigital(Integer idPartido) {
         Partido partido = partidoRepository.findById(idPartido)
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
@@ -111,6 +116,8 @@ public class PartidoService {
 
         return new PlanillaDigitalDTO(
                 partido.getIdPartido(),
+                torneo.getIdTorneo(),
+                torneo.getNombreTorneo(),
                 fechaPartido,
                 horaPartido,
                 nombreCancha,
@@ -157,7 +164,7 @@ public class PartidoService {
         registrarParticipaciones(partido, jugadoresVisitante);
 
         // 5. Cambiar estado del partido
-        partido.setEstado("EN_CURSO");
+        partido.setEstado("EN CURSO");
         partidoRepository.save(partido);
     }
 
@@ -167,18 +174,24 @@ public class PartidoService {
                 .stream()
                 .map(j -> new JugadorPlanillaDTO(
                         j.getIdTorneoEquipoJugador(),
-                        j.getJugador().getNombreJugador()))
+                        j.getJugador().getNombreJugador()+" "+
+                                j.getJugador().getApellidosJugador()))
                 .collect(Collectors.toList());
     }
 
     //retorna una lista de jugadores que ya fueron participantes del partido
     public List<JugadorPlanillaDTO> listarParticipantesPorPartido(Integer idPartido, Integer idTorneoEquipo) {
-        return participacionJugadorRepository.findByPartidoIdPartidoAndTorneoEquipoJugadorTorneoEquipoIdTorneoEquipo(idPartido,idTorneoEquipo)
+        return participacionJugadorRepository.findJugadoresPlanilla(idPartido,idTorneoEquipo)
                 .stream()
                 .map(p -> new JugadorPlanillaDTO(
-                        p.getIdParticipacion(),
-                        p.getTorneoEquipoJugador().getJugador().getNombreJugador(),
-                        p.getDorsalJugador()))
+                        p.getIdReferencia(),
+                        p.getNombreJugador(),
+                        p.getDorsal(),
+                        p.getCantGoles(),
+                        p.getCantAmarillas(),
+                        p.getCantRojas(),
+                        p.getCantAzules()
+                ))
                 .collect(Collectors.toList());
     }
 
@@ -236,6 +249,7 @@ public class PartidoService {
         nuevoPartido.setHoraPartido(dto.getHora());
         nuevoPartido.setNombreCancha(dto.getCancha());
         nuevoPartido.setFaseTorneo(dto.getFase());
+        nuevoPartido.setEstado("PROGRAMADO");
 
         partidoRepository.save(nuevoPartido);
         return new PartidoResDuplicateDTO("SUCCESS", "Partido programado exitosamente.");

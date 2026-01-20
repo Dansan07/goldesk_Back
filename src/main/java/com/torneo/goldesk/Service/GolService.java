@@ -3,6 +3,8 @@ package com.torneo.goldesk.Service;
 import com.torneo.goldesk.Entity.Gol;
 import com.torneo.goldesk.Entity.ParticipacionJugador;
 import com.torneo.goldesk.Entity.Partido;
+import com.torneo.goldesk.Exception.GlobalExceptionHandler;
+import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.GolRepository;
 import com.torneo.goldesk.Repository.ParticipacionJugadorRepository;
 import com.torneo.goldesk.Repository.PartidoRepository;
@@ -31,12 +33,14 @@ public class GolService {
     public void registrarGol(GolCreateDTO dto) {
         // 1. Buscamos la participación (que ya contiene al Partido y al Jugador)
         ParticipacionJugador participacion = participacionJugadorRepository
-                .findByPartidoIdPartidoAndTorneoEquipoJugadorIdTorneoEquipoJugador(dto.getIdPartido(), dto.getIdTorneoEquipoJugador())
-                .orElseThrow(() -> new RuntimeException("El jugador no está registrado en este partido"));
+                .findById(dto.getIdParticipacion())
+                .orElseThrow(() -> new ResourceNotFoundException("Participación No registrada"));
 
         // 2. Crear el registro del gol
         Gol nuevoGol = new Gol();
         nuevoGol.setParticipacionJugador(participacion);
+        nuevoGol.setPeriodoPartido(dto.getPeriodoPartido());
+        nuevoGol.setTiempoEvento(dto.getTiempoEvento());
         golRepository.save(nuevoGol);
 
         // 3. ACTUALIZAR EL MARCADOR (Usando la data de la participacion)

@@ -15,6 +15,12 @@ public class Gol {
     @JoinColumn(name = "id_participacion")
     private ParticipacionJugador participacionJugador; // El participacionJugador que hizo el gol y su equipo
 
+    @Column(name = "periodo_partido")
+    private String periodoPartido;
+
+    @Column(name = "tiempo_evento")
+    private String tiempoEvento;
+
     //constructor
     public Gol() {
     }
@@ -35,5 +41,21 @@ public class Gol {
 
     public void setParticipacionJugador(ParticipacionJugador participacionJugador) {
         this.participacionJugador = participacionJugador;
+    }
+
+    public String getPeriodoPartido() {
+        return periodoPartido;
+    }
+
+    public void setPeriodoPartido(String periodoPartido) {
+        this.periodoPartido = periodoPartido;
+    }
+
+    public String getTiempoEvento() {
+        return tiempoEvento;
+    }
+
+    public void setTiempoEvento(String tiempoEvento) {
+        this.tiempoEvento = tiempoEvento;
     }
 }

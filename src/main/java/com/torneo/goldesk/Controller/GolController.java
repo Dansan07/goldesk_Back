@@ -19,9 +19,10 @@ public class GolController {
         this.golService = golService;
     }
 
-    @PostMapping
-    public void registrarGol(@RequestBody GolCreateDTO dto){
+    @PostMapping("/registrar-gol")
+    public ResponseEntity<?> registrarGol(@RequestBody GolCreateDTO dto){
         golService.registrarGol(dto);
+        return ResponseEntity.ok("Gol Registrado Con éxito");
     }
 
     @GetMapping("/buscar-x-jugador")

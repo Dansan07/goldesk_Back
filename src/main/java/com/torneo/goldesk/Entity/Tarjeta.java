@@ -24,6 +24,12 @@ public class Tarjeta {
     @JoinColumn(name = "id_participacion")
     private ParticipacionJugador participacionJugador;
 
+    @Column(name = "periodo_partido")
+    private String periodoPartido;
+
+    @Column(name = "tiempo_evento")
+    private String tiempoEvento;
+
     //contructor
 
     public Tarjeta() {
@@ -69,5 +75,21 @@ public class Tarjeta {
 
     public void setParticipacionJugador(ParticipacionJugador participacionJugador) {
         this.participacionJugador = participacionJugador;
+    }
+
+    public String getPeriodoPartido() {
+        return periodoPartido;
+    }
+
+    public void setPeriodoPartido(String periodoPartido) {
+        this.periodoPartido = periodoPartido;
+    }
+
+    public String getTiempoEvento() {
+        return tiempoEvento;
+    }
+
+    public void setTiempoEvento(String tiempoEvento) {
+        this.tiempoEvento = tiempoEvento;
     }
 }

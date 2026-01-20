@@ -8,6 +8,8 @@ public class PlanillaDigitalDTO{
 
     // Campos básicos del partido
     private Integer idPartido;
+    private Integer idTorneo;
+    private String nombreTorneo;
     private LocalDate fechaPartido;
     private LocalTime horaPartido;
     private String nombreCancha;
@@ -33,12 +35,14 @@ public class PlanillaDigitalDTO{
     private Boolean arbPagadoVisitante;
 
     //constructor
-    public PlanillaDigitalDTO(Integer idPartido, LocalDate fechaPartido, LocalTime horaPartido, String nombreCancha,
+    public PlanillaDigitalDTO(Integer idPartido, Integer idTorneo, String nombreTorneo, LocalDate fechaPartido, LocalTime horaPartido, String nombreCancha,
                               Integer golesLocal, Integer golesVisitante, Integer penalesLocal, Integer penalesVisitante,
                               String faseTorneo, String estado, Integer idEquipoLocal, String nombreEquipoLocal,
                               List<JugadorPlanillaDTO> jugadoresLocal, Double pagoArbitrajeLocal, Boolean arbPagadoLocal, Integer idEquipoVisitante,
                               String nombreEquipoVisitante, List<JugadorPlanillaDTO> jugadoresVisitante, Double pagoArbitrajeVisitante, Boolean arbPagadoVisitante) {
         this.idPartido = idPartido;
+        this.idTorneo = idTorneo;
+        this.nombreTorneo = nombreTorneo;
         this.fechaPartido = fechaPartido;
         this.horaPartido = horaPartido;
         this.nombreCancha = nombreCancha;
@@ -62,6 +66,22 @@ public class PlanillaDigitalDTO{
 
     //getters and setters
 
+
+    public Integer getIdTorneo() {
+        return idTorneo;
+    }
+
+    public void setIdTorneo(Integer idTorneo) {
+        this.idTorneo = idTorneo;
+    }
+
+    public String getNombreTorneo() {
+        return nombreTorneo;
+    }
+
+    public void setNombreTorneo(String nombreTorneo) {
+        this.nombreTorneo = nombreTorneo;
+    }
 
     public Boolean getArbPagadoLocal() {
         return arbPagadoLocal;

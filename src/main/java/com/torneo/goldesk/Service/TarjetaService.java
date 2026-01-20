@@ -46,15 +46,17 @@ public class TarjetaService {
     public void registrarTarjeta(TarjetaCreateDTO dto) {
         // 1. Buscamos la participación única (Auditoría: vincula jugador, equipo y partido en un solo ID)
         ParticipacionJugador participacion = participacionJugadorRepository
-                .findByPartidoIdPartidoAndTorneoEquipoJugadorIdTorneoEquipoJugador(dto.getIdPartido(), dto.getIdJugador())
+                .findById(dto.getIdParticipacion())
                 .orElseThrow(() -> new RuntimeException("El jugador no tiene una participación activa en este partido"));
 
         // 2. Crear objeto Tarjeta vinculado a la participación
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setParticipacionJugador(participacion);
-        tarjeta.setTipoTarjeta(dto.getTipoTarjeta().toUpperCase());
+        tarjeta.setTipoTarjeta(dto.getTipoTarjeta().toLowerCase().trim());
         tarjeta.setValorTarjeta(dto.getValorTarjeta());
         tarjeta.setMotivoTarjeta(dto.getMotivoTarjeta());
+        tarjeta.setPeriodoPartido(dto.getPeriodoPartido());
+        tarjeta.setTiempoEvento(dto.getTiempoEvento());
 
         tarjetaRepository.save(tarjeta);
     }

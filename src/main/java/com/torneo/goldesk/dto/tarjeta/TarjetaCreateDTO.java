@@ -2,11 +2,16 @@ package com.torneo.goldesk.dto.tarjeta;
 
 public class TarjetaCreateDTO {
 
-    private String tipoTarjeta;
+    private Integer idParticipacion;
     private Double valorTarjeta;
+    private String tipoTarjeta;
     private String motivoTarjeta;
-    private Integer idPartido;
-    private Integer idJugador;
+    private String periodoPartido;
+    private String tiempoEvento;
+
+    public Integer getIdParticipacion() {
+        return idParticipacion;
+    }
 
     public String getTipoTarjeta() {
         return tipoTarjeta;
@@ -20,11 +25,11 @@ public class TarjetaCreateDTO {
         return motivoTarjeta;
     }
 
-    public Integer getIdPartido() {
-        return idPartido;
+    public String getPeriodoPartido() {
+        return periodoPartido;
     }
 
-    public Integer getIdJugador() {
-        return idJugador;
+    public String getTiempoEvento() {
+        return tiempoEvento;
     }
 }

@@ -26,9 +26,10 @@ public class TarjetaController {
     }
 
     // Registrar una nueva tarjeta
-    @PostMapping
-    public void registrar(@RequestBody TarjetaCreateDTO dto) {
+    @PostMapping("/registrar-tarjeta")
+    public ResponseEntity<?> registrar(@RequestBody TarjetaCreateDTO dto) {
         tarjetaService.registrarTarjeta(dto);
+        return ResponseEntity.ok("Tarjeta registrada con éxito");
     }
 
     // Buscar tarjetas de un jugador específico en un partido (Para la gestión)

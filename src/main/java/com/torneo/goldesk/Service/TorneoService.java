@@ -2,6 +2,7 @@ package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.Organizador;
 import com.torneo.goldesk.Entity.Torneo;
+import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
 import com.torneo.goldesk.Repository.TorneoRepository;
 import com.torneo.goldesk.dto.torneo.TorneoCreateDTO;
@@ -20,6 +21,12 @@ public class TorneoService {
     public TorneoService(TorneoRepository torneoRepository, OrganizadorRepository organizadorRepository) {
         this.torneoRepository = torneoRepository;
         this.organizadorRepository = organizadorRepository;
+    }
+
+    public TorneoResponseDTO obtenerTorneoUnico(Integer idTorneo){
+        Torneo torneo = torneoRepository.findById(idTorneo)
+                .orElseThrow(() -> new ResourceNotFoundException("Torneo no encontrado"));
+        return convertirADTO(torneo);
     }
 
     public void recuperarTorneo(Integer id){

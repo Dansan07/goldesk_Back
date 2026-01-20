@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth-> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/organizadores/**").hasAnyRole("ADMIN", "ORGANIZADOR")
+                        .requestMatchers("/api/partidos/{idPartido}/ver-planilla").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(
                         jwtAuthenticationFilter(),

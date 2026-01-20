@@ -88,7 +88,8 @@ public class TorneoEquipoService {
         TorneoEquipo torneoEquipo = new TorneoEquipo();
         torneoEquipo.setTorneo(torneo);
         torneoEquipo.setEquipo(equipo);
-        torneoEquipo.setNombrePersonalizado(dto.getNombrePersonalizado() != null ? dto.getNombrePersonalizado() : equipo.getNombreEquipo());
+        torneoEquipo.setNombrePersonalizado(dto.getNombrePersonalizado() != null ?
+                dto.getNombrePersonalizado() : equipo.getNombreEquipo());
         torneoEquipo.setEquipoActivo(true);
 
         // 4. Guardar el torneo (esto actualiza la tabla intermedia automáticamente)

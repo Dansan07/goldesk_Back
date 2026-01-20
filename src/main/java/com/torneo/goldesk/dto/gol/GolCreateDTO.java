@@ -2,14 +2,19 @@ package com.torneo.goldesk.dto.gol;
 
 public class GolCreateDTO {
 
-    private Integer idTorneoEquipoJugador;
-    private Integer idPartido;
+    private Integer idParticipacion;
+    private String periodoPartido;
+    private String tiempoEvento;
 
-    public Integer getIdTorneoEquipoJugador() {
-        return idTorneoEquipoJugador;
+    public Integer getIdParticipacion() {
+        return idParticipacion;
     }
 
-    public Integer getIdPartido() {
-        return idPartido;
+    public String getPeriodoPartido() {
+        return periodoPartido;
+    }
+
+    public String getTiempoEvento() {
+        return tiempoEvento;
     }
 }

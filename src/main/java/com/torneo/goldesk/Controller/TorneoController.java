@@ -20,9 +20,14 @@ public class TorneoController {
         this.torneoService = torneoService;
     }
 
+    @GetMapping("/{idTorneo}")
+    public ResponseEntity<?> obtenerTorneoUnico(@PathVariable Integer idTorneo){
+        TorneoResponseDTO torneo = torneoService.obtenerTorneoUnico(idTorneo);
+        return ResponseEntity.status(HttpStatus.OK).body(torneo);
+    }
+
     @PutMapping("/recuperar/{id}")
     public ResponseEntity<String> recuperarTorneo(@PathVariable Integer id){
-
         torneoService.recuperarTorneo(id);
         return ResponseEntity.ok("Torneo Restaurado Exitosamente");
     }
