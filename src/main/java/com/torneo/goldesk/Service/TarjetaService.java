@@ -35,8 +35,9 @@ public class TarjetaService {
 
 
     // Metodo para listar las tarjetas de un jugador en un partido
-    public List<TarjetaResponseDTO> obtenerTarjetasPorParticipacion(Integer idParticipacion) {
-        return tarjetaRepository.findByParticipacionJugador_IdParticipacion(idParticipacion)
+    public List<TarjetaResponseDTO> obtenerTarjetasPorParticipacion(Integer idParticipacion, String tipoTarjeta) {
+        return tarjetaRepository.findByParticipacionJugador_IdParticipacionAndTipoTarjeta(
+                idParticipacion, tipoTarjeta)
                 .stream()
                 .map(this::convertirADTO
                 ).toList();
@@ -76,7 +77,9 @@ public class TarjetaService {
                 t.getTipoTarjeta(),
                 t.getParticipacionJugador().getTorneoEquipoJugador().getJugador().getNombreJugador(),
                 t.getValorTarjeta(),
-                t.getMotivoTarjeta()
+                t.getMotivoTarjeta(),
+                t.getPeriodoPartido(),
+                t.getTiempoEvento()
         );
     }
 }

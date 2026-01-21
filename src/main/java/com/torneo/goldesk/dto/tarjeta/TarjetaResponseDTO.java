@@ -7,13 +7,17 @@ public class TarjetaResponseDTO {
     private String nombreJugador;
     private Double valorTarjeta;
     private String motivo;
+    private String periodoPartido;
+    private String tiempoEvento;
 
-    public TarjetaResponseDTO(Integer idTarjeta, String tipoTarjeta, String nombreJugador, Double valorTarjeta, String motivo) {
+    public TarjetaResponseDTO(Integer idTarjeta, String tipoTarjeta, String nombreJugador, Double valorTarjeta, String motivo, String periodoPartido, String tiempoEvento) {
         this.idTarjeta = idTarjeta;
         this.tipoTarjeta = tipoTarjeta;
         this.nombreJugador = nombreJugador;
         this.valorTarjeta = valorTarjeta;
         this.motivo = motivo;
+        this.periodoPartido = periodoPartido;
+        this.tiempoEvento = tiempoEvento;
     }
 
     public Integer getIdTarjeta() {
@@ -34,5 +38,13 @@ public class TarjetaResponseDTO {
 
     public String getMotivo() {
         return motivo;
+    }
+
+    public String getPeriodoPartido() {
+        return periodoPartido;
+    }
+
+    public String getTiempoEvento() {
+        return tiempoEvento;
     }
 }

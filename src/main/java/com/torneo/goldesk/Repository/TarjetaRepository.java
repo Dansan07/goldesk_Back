@@ -12,7 +12,7 @@ public interface TarjetaRepository extends JpaRepository<Tarjeta,Integer> {
 
     Optional<Tarjeta> findByIdTarjeta(Integer idTarjeta);
 
-    List<Tarjeta> findByParticipacionJugador_IdParticipacion(Integer idParticipacion);
+    List<Tarjeta> findByParticipacionJugador_IdParticipacionAndTipoTarjeta(Integer idParticipacion, String tipoTarjeta);
 
     List<Tarjeta> findByParticipacionJugador_TorneoEquipoJugador_TorneoEquipo_Torneo_IdTorneo(Integer idTorneo);
 }

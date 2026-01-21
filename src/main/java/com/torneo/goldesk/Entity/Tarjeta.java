@@ -12,7 +12,7 @@ public class Tarjeta {
     private Integer idTarjeta;
 
     @Column(name = "tipo_tarjeta")
-    private String tipoTarjeta; // AMARILLA o ROJA
+    private String tipoTarjeta; // AMARILLA, AZUL o ROJA
 
     @Column(name = "valor_tarjeta")
     private Double valorTarjeta; // Para el costo de la multa
