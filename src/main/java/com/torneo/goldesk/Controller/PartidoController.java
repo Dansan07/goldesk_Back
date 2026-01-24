@@ -38,13 +38,21 @@ public class PartidoController {
     }
 
     @PostMapping("/{idPartido}/iniciar")
-    public ResponseEntity<String> iniciarPartido(@PathVariable Integer idPartido) {
+    public ResponseEntity<?> iniciarPartido(@PathVariable Integer idPartido) {
         try {
             partidoService.iniciarPartido(idPartido);
-            return ResponseEntity.ok("Partido iniciado correctamente. Las participaciones han sido generadas.");        } catch (RuntimeException e) {
+            return ResponseEntity.ok("Partido iniciado correctamente. Las participaciones han sido generadas.");
+        } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PostMapping("/{idPartido}/finalizar")
+    public ResponseEntity<?> finalizarPartido(@PathVariable Integer idPartido){
+        partidoService.finalizarPartido(idPartido);
+        return ResponseEntity.ok("El partido ha Finalizado con éxito.");
+    }
+
     @PostMapping("/programar-partido")
     public ResponseEntity<PartidoResDuplicateDTO> programarPartido(@RequestBody PartidoCreateDTO dto){
         PartidoResDuplicateDTO mensaje = partidoService.programarPartido(dto);

@@ -1,6 +1,7 @@
 package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.*;
+import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.*;
 import com.torneo.goldesk.dto.gol.GolResponseDTO;
 import com.torneo.goldesk.dto.partido.FiltroHistorialPartidos;
@@ -147,7 +148,7 @@ public class PartidoService {
                 .orElseThrow(() -> new RuntimeException("Partido no encontrado"));
 
         // 2. Evitar duplicar participaciones si el partido ya inició
-        if (!"PROGRAMADO".equals(partido.getEstado())) {
+        if (!partido.getEstado().equals("PROGRAMADO")) {
             throw new RuntimeException("El partido ya ha sido iniciado o finalizado.");
         }
 
@@ -165,6 +166,15 @@ public class PartidoService {
 
         // 5. Cambiar estado del partido
         partido.setEstado("EN CURSO");
+        partidoRepository.save(partido);
+    }
+
+    @Transactional
+    public void finalizarPartido(Integer idPartido){
+        Partido partido = partidoRepository.findByIdPartido(idPartido)
+                .orElseThrow(()-> new ResourceNotFoundException("Partido No encontrado"));
+
+        partido.setEstado("FINALIZADO");
         partidoRepository.save(partido);
     }
 

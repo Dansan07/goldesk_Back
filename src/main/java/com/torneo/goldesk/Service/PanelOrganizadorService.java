@@ -46,7 +46,8 @@ public class PanelOrganizadorService {
                 .stream()
                 .map(t -> Map.<String, Object>of(
                         "idTorneo", t.getIdTorneo(),
-                        "nombreTorneo", t.getNombreTorneo()
+                        "nombreTorneo", t.getNombreTorneo(),
+                        "partidosInicial", t.getPartidosInicial()
                 ))
                 .toList();
     }

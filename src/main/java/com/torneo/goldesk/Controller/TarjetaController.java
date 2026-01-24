@@ -40,9 +40,9 @@ public class TarjetaController {
     }
 
     // Eliminar la tarjeta específica
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
-        tarjetaService.eliminarTarjeta(id);
+    @DeleteMapping("/{idTarjeta}")
+    public ResponseEntity<String> eliminar(@PathVariable Integer idTarjeta) {
+        tarjetaService.eliminarTarjeta(idTarjeta);
         return ResponseEntity.ok("Tarjeta eliminada correctamente");
     }
 }

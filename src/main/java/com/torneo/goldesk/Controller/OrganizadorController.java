@@ -34,7 +34,8 @@ public class OrganizadorController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
     public ResponseEntity<?> obtenerTorneosDelOrganizador(@PathVariable String cedula) {
         // Extraer la cédula del contexto de seguridad (la que viene en el JWT)
-        String cedulaToken = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String cedulaToken =
+                (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!cedulaToken.equals(cedula)){
             return ResponseEntity.status(HttpStatus.FORBIDDEN)

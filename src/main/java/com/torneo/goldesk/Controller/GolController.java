@@ -31,10 +31,10 @@ public class GolController {
         return ResponseEntity.ok(golService.listarGolesPorParticipacion(idParticipacion));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> eliminarGol(@PathVariable Integer id) {
+    @DeleteMapping("/{idGol}")
+    public ResponseEntity<String> eliminarGol(@PathVariable Integer idGol) {
         try {
-            golService.eliminarGol(id);
+            golService.eliminarGol(idGol);
             return ResponseEntity.ok("Gol eliminado y marcador actualizado correctamente.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
