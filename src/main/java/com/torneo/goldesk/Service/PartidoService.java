@@ -108,17 +108,24 @@ public class PartidoService {
             jugadoresLocal=listarDisponiblesPorEquipo(partido.getLocal().getIdTorneoEquipo());
             jugadoresVisitantes=listarDisponiblesPorEquipo(partido.getVisitante().getIdTorneoEquipo());
         }
-        String nombreEquipoLocal = partido.getLocal().getEquipo().getNombreEquipo();
-        String nombreEquipoVisitante= partido.getVisitante().getEquipo().getNombreEquipo();
+        String nombreEquipoLocal = partido.getLocal().getNombrePersonalizado();
+        String nombreEquipoVisitante= partido.getVisitante().getNombrePersonalizado();
         LocalDate fechaPartido = partido.getFechaPartido();
         LocalTime horaPartido = partido.getHoraPartido();
         String nombreCancha = partido.getNombreCancha();
         String faseTorneo = partido.getFaseTorneo();
 
+        Integer idArbLocal= (pagoArbitrajeLocal!=null)?
+                pagoArbitrajeLocal.getIdPagoArbitraje():null;
+
+        Integer idArbVisitante = (pagoArbitrajeVisitante!=null)?
+                pagoArbitrajeVisitante.getIdPagoArbitraje():null;
+
         return new PlanillaDigitalDTO(
                 partido.getIdPartido(),
                 torneo.getIdTorneo(),
                 torneo.getNombreTorneo(),
+                torneo.getValorArbitraje(),
                 fechaPartido,
                 horaPartido,
                 nombreCancha,
@@ -131,11 +138,13 @@ public class PartidoService {
                 partido.getLocal().getIdTorneoEquipo(),
                 nombreEquipoLocal,
                 jugadoresLocal,
+                idArbLocal,
                 arbitrajeLocal,
                 pagoLocal,
                 partido.getVisitante().getIdTorneoEquipo(),
                 nombreEquipoVisitante,
                 jugadoresVisitantes,
+                idArbVisitante,
                 arbitrajeVisitante,
                 pagoVisitante
         );
@@ -225,19 +234,13 @@ public class PartidoService {
 
     public PartidoResDuplicateDTO programarPartido(PartidoCreateDTO dto) {
 
-        Optional<TorneoEquipo> localOpt= torneoEquipoRepository.findByTorneo_IdTorneoAndEquipo_IdEquipo(dto.getIdTorneo(),dto.getIdEquipoLocal());
-        Optional<TorneoEquipo> visitantelOpt= torneoEquipoRepository.findByTorneo_IdTorneoAndEquipo_IdEquipo(dto.getIdTorneo(),dto.getIdEquipoVisitante());
+//        Optional<TorneoEquipo> localOpt= torneoEquipoRepository.findByTorneo_IdTorneoAndEquipo_IdEquipo(dto.getIdTorneo(),dto.getIdEquipoLocal());
+//        Optional<TorneoEquipo> visitantelOpt= torneoEquipoRepository.findByTorneo_IdTorneoAndEquipo_IdEquipo(dto.getIdTorneo(),dto.getIdEquipoVisitante());
+        TorneoEquipo local = torneoEquipoRepository.findByIdTorneoEquipo(dto.getIdEquipoLocal())
+                .orElseThrow(()-> new ResourceNotFoundException("Equipo local no encontrado"));
 
-        if (localOpt.isEmpty()){
-            return new PartidoResDuplicateDTO("ERROR","Equipo local no encontrado");
-        }
-        if (visitantelOpt.isEmpty()){
-            return new PartidoResDuplicateDTO("ERROR",
-                    "Equipo visitante no encontrado");
-        }
-
-        TorneoEquipo local=localOpt.get();
-        TorneoEquipo visitante=visitantelOpt.get();
+        TorneoEquipo visitante = torneoEquipoRepository.findByIdTorneoEquipo(dto.getIdEquipoVisitante())
+                .orElseThrow(()-> new ResourceNotFoundException("Equipo visitante no encontrado"));
 
         if (local.getIdTorneoEquipo().equals(visitante.getIdTorneoEquipo())) {
             return new PartidoResDuplicateDTO("ERROR",

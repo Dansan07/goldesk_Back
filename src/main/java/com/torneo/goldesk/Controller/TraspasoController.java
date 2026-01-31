@@ -43,14 +43,21 @@ public class TraspasoController {
 
     // 1. Iniciar el trámite (Crea el registro en la DB)
     @PostMapping("/crear")
-    public ResponseEntity<byte[]> crearSolicitud(@RequestBody TraspasoCreateDTO dto) {
-        byte[] pdfConsten = traspasoService.crearSolicitud(dto);
+    public ResponseEntity<?> crearSolicitud(@RequestBody TraspasoCreateDTO dto) {
+        try {
+            byte[] pdfContent = traspasoService.crearSolicitud(dto);
 
-        HttpHeaders headers=new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"Solicitud_Traspaso.pdf\"")
+                    .body(pdfContent);
 
-        headers.setContentDispositionFormData("attachment","Solicitud_Traspaso.pdf");
-        return new ResponseEntity<>(pdfConsten, headers, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            // Si el Service lanza la excepción de "Ya existe una solicitud",
+            // aquí la capturamos para enviar un mensaje claro al Front.
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
 
     // 2. Generar y descargar el PDF para firmar

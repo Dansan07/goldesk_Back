@@ -10,6 +10,7 @@ public class PlanillaDigitalDTO{
     private Integer idPartido;
     private Integer idTorneo;
     private String nombreTorneo;
+    private Double ArbitrajeTotal;
     private LocalDate fechaPartido;
     private LocalTime horaPartido;
     private String nombreCancha;
@@ -24,6 +25,7 @@ public class PlanillaDigitalDTO{
     private Integer idEquipoLocal;
     private String nombreEquipoLocal;
     private List<JugadorPlanillaDTO> jugadoresLocal;
+    private Integer idPagoArbLocal;
     private Double pagoArbitrajeLocal;
     private Boolean arbPagadoLocal;
 
@@ -31,18 +33,20 @@ public class PlanillaDigitalDTO{
     private Integer idEquipoVisitante;
     private String nombreEquipoVisitante;
     private List<JugadorPlanillaDTO> jugadoresVisitante;
+    private Integer idPagoArbVisitante;
     private Double pagoArbitrajeVisitante;
     private Boolean arbPagadoVisitante;
 
     //constructor
-    public PlanillaDigitalDTO(Integer idPartido, Integer idTorneo, String nombreTorneo, LocalDate fechaPartido, LocalTime horaPartido, String nombreCancha,
+    public PlanillaDigitalDTO(Integer idPartido, Integer idTorneo, String nombreTorneo, Double arbitrajeTotal, LocalDate fechaPartido, LocalTime horaPartido, String nombreCancha,
                               Integer golesLocal, Integer golesVisitante, Integer penalesLocal, Integer penalesVisitante,
                               String faseTorneo, String estado, Integer idEquipoLocal, String nombreEquipoLocal,
-                              List<JugadorPlanillaDTO> jugadoresLocal, Double pagoArbitrajeLocal, Boolean arbPagadoLocal, Integer idEquipoVisitante,
-                              String nombreEquipoVisitante, List<JugadorPlanillaDTO> jugadoresVisitante, Double pagoArbitrajeVisitante, Boolean arbPagadoVisitante) {
+                              List<JugadorPlanillaDTO> jugadoresLocal, Integer idPagoArbLocal, Double pagoArbitrajeLocal, Boolean arbPagadoLocal, Integer idEquipoVisitante,
+                              String nombreEquipoVisitante, List<JugadorPlanillaDTO> jugadoresVisitante, Integer idPagoArbVisitante, Double pagoArbitrajeVisitante, Boolean arbPagadoVisitante) {
         this.idPartido = idPartido;
         this.idTorneo = idTorneo;
         this.nombreTorneo = nombreTorneo;
+        this.ArbitrajeTotal = arbitrajeTotal;
         this.fechaPartido = fechaPartido;
         this.horaPartido = horaPartido;
         this.nombreCancha = nombreCancha;
@@ -55,17 +59,43 @@ public class PlanillaDigitalDTO{
         this.idEquipoLocal = idEquipoLocal;
         this.nombreEquipoLocal = nombreEquipoLocal;
         this.jugadoresLocal = jugadoresLocal;
+        this.idPagoArbLocal = idPagoArbLocal;
         this.pagoArbitrajeLocal = pagoArbitrajeLocal;
         this.arbPagadoLocal = arbPagadoLocal;
         this.idEquipoVisitante = idEquipoVisitante;
         this.nombreEquipoVisitante = nombreEquipoVisitante;
         this.jugadoresVisitante = jugadoresVisitante;
+        this.idPagoArbVisitante = idPagoArbVisitante;
         this.pagoArbitrajeVisitante = pagoArbitrajeVisitante;
         this.arbPagadoVisitante = arbPagadoVisitante;
     }
 
     //getters and setters
 
+
+    public Double getArbitrajeTotal() {
+        return ArbitrajeTotal;
+    }
+
+    public void setArbitrajeTotal(Double arbitrajeTotal) {
+        ArbitrajeTotal = arbitrajeTotal;
+    }
+
+    public Integer getIdPagoArbLocal() {
+        return idPagoArbLocal;
+    }
+
+    public void setIdPagoArbLocal(Integer idPagoArbLocal) {
+        this.idPagoArbLocal = idPagoArbLocal;
+    }
+
+    public Integer getIdPagoArbVisitante() {
+        return idPagoArbVisitante;
+    }
+
+    public void setIdPagoArbVisitante(Integer idPagoArbVisitante) {
+        this.idPagoArbVisitante = idPagoArbVisitante;
+    }
 
     public Integer getIdTorneo() {
         return idTorneo;

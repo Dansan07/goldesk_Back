@@ -158,14 +158,15 @@ public class TraspasoService {
         // 2. Identificar dónde está el jugador actualmente en este torneo
         // Buscamos su inscripción activa
         TorneoEquipoJugador inscripcionActual = torneoEquipoJugadorRepository
-                .findActiveInscripcionByJugadorIdJugador(dto.getIdJugador())
+                .findById(dto.getIdTorneoEquipoJugador())
                 .orElseThrow(() -> new RuntimeException("El jugador no tiene una inscripción activa para traspasar."));
 
         // 3. Crear la entidad de solicitud
         Traspaso nuevaSolicitud = new Traspaso();
 
         // Seteamos quién responde (deberías buscar el objeto Organizador por su cédula aquí)
-        String cedulaOrganizador=inscripcionActual.getTorneoEquipo().getTorneo().getOrganizador().getCedulaOrg();
+        String cedulaOrganizador = inscripcionActual.getTorneoEquipo().getTorneo().getOrganizador().getCedulaOrg();
+
         nuevaSolicitud.setOrganizador(organizadorRepository.findByCedulaOrg(cedulaOrganizador)
                 .orElseThrow(()-> new RuntimeException("Organizador No encontrado.")));
 
@@ -176,12 +177,22 @@ public class TraspasoService {
         // El equipo que solicita el fichaje
         TorneoEquipo equipoSolicita = torneoEquipoRepository.findById(dto.getIdTorneoEquipoSolicita())
                 .orElseThrow(()-> new RuntimeException("El equipo de destino no existe."));
+
         // Validación extra: ¿El equipo nuevo pertenece al mismo torneo que el actual?
         if (!equipoSolicita.getTorneo().getIdTorneo().equals(inscripcionActual.getTorneoEquipo().getTorneo().getIdTorneo())) {
             throw new RuntimeException("El equipo de destino debe pertenecer al mismo torneo actual. No es necesario Realizar Traspaso.");
         }
-        nuevaSolicitud.setTorneoEquipoSolicita(equipoSolicita);
 
+        //valida que no se esté haciendo traspaso al mismo equipo.
+        String nombreEquipo= inscripcionActual.getTorneoEquipo().getNombrePersonalizado().isEmpty()?
+                inscripcionActual.getTorneoEquipo().getEquipo().getNombreEquipo():
+                inscripcionActual.getTorneoEquipo().getNombrePersonalizado();
+        if (inscripcionActual.getTorneoEquipo().getIdTorneoEquipo().equals(equipoSolicita.getIdTorneoEquipo())){
+            throw new RuntimeException(
+                    "Este jugador ya pertenece al equipo: "+nombreEquipo);
+        }
+
+        nuevaSolicitud.setTorneoEquipoSolicita(equipoSolicita);
         nuevaSolicitud.setAsunto(dto.getAsuntoTraspaso());
         nuevaSolicitud.setEstado("PENDIENTE");
 

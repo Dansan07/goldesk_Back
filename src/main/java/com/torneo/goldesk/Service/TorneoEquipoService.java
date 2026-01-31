@@ -48,18 +48,11 @@ public class TorneoEquipoService {
     }
 
     public void actualizarNombrePersonalizado(TorneoEquipoUpdateDTO dto) {
-        // Es buena práctica validar que los IDs vengan en el DTO para evitar NullPointerException
-        if (dto.getTorneo() == null || dto.getEquipo() == null) {
-            throw new RuntimeException("Los datos del Torneo y Equipo son obligatorios para la actualización");
-        }
-        // Buscamos la fila exacta que coincide con ambos IDs
-        TorneoEquipo inscripcion = torneoEquipoRepository
-                .findByTorneo_IdTorneoAndEquipo_IdEquipo(dto.getTorneo().getIdTorneo(), dto.getEquipo().getIdEquipo())
+        // Buscamos la fila exacta que coincide con ID
+        TorneoEquipo inscripcion = torneoEquipoRepository.findByIdTorneoEquipo(dto.getIdTorneoEquipo())
                 .orElseThrow(() -> new RuntimeException("El equipo no está inscrito en este torneo"));
-
         // Actualizamos el dato
         inscripcion.setNombrePersonalizado(dto.getNombrePersonalizado());
-
         // Guardamos
         torneoEquipoRepository.save(inscripcion);
     }

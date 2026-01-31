@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/organizadores")
+@RequestMapping("api/organizadores")
 public class OrganizadorController {
 
     private final OrganizadorService organizadorService;

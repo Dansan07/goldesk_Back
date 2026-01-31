@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/torneoEquipos")
+@RequestMapping("api/torneoEquipos")
 public class TorneoEquipoController {
 
     private final TorneoEquipoService torneoEquipoService;
@@ -36,8 +36,7 @@ public class TorneoEquipoController {
     }
 
     @PatchMapping("/actualizar-nombre")
-    public ResponseEntity<String> editarNombreEquipo(@RequestBody TorneoEquipoUpdateDTO dto) {
-
+    public ResponseEntity<?> editarNombreEquipo(@RequestBody TorneoEquipoUpdateDTO dto) {
         torneoEquipoService.actualizarNombrePersonalizado(dto);
         return ResponseEntity.ok("Nombre personalizado actualizado correctamente");
     }

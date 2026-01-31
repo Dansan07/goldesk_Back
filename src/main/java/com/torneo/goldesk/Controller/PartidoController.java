@@ -25,8 +25,8 @@ public class PartidoController {
         return ResponseEntity.ok(partidoService.listaPartidosPorTorneo(filtro));
     }
 
-    @PatchMapping("/participacion/{idParticipacion}/dorsal")
-    public ResponseEntity<String> actualizarDorsal(@PathVariable Integer idParticipacion, @RequestBody String dorsal) {
+    @PatchMapping("/participacion/{idParticipacion}/dorsal/{dorsal}")
+    public ResponseEntity<?> actualizarDorsal(@PathVariable Integer idParticipacion, @PathVariable String dorsal) {
         partidoService.actualizarDorsalManual(idParticipacion, dorsal);
         return ResponseEntity.ok("Dorsal actualizado correctamente");
     }

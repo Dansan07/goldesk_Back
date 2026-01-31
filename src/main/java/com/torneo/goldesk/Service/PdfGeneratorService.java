@@ -93,12 +93,20 @@ public class PdfGeneratorService {
             table.addCell(cellHeader);
 
             // Filas de la Tabla
-            agregarFilaTabla(table, "JUGADOR:", solicitud.getJugador().getNombreJugador() + " " + solicitud.getJugador().getApellidosJugador(), fontNegrita, fontDatos);
-            agregarFilaTabla(table, "DOCUMENTO:", solicitud.getJugador().getCedulaJug(), fontNegrita, fontDatos);
-            agregarFilaTabla(table, "TORNEO:", solicitud.getTorneoEquipoActual().getTorneo().getNombreTorneo(), fontNegrita, fontDatos);
-            agregarFilaTabla(table, "EQUIPO ORIGEN:", solicitud.getTorneoEquipoActual().getEquipo().getNombreEquipo(), fontNegrita, fontDatos);
-            agregarFilaTabla(table, "EQUIPO DESTINO:", solicitud.getTorneoEquipoSolicita().getEquipo().getNombreEquipo(), fontNegrita, fontDatos);
-            agregarFilaTabla(table, "FECHA SOLICITUD:", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")), fontNegrita, fontDatos);
+            String nombreJugador = solicitud.getJugador().getNombreJugador() + " " + solicitud.getJugador().getApellidosJugador();
+            String documentoJugador = solicitud.getJugador().getCedulaJug();
+            String torneo;
+            String equipoActual = solicitud.getTorneoEquipoActual().getNombrePersonalizado()==null?
+                    solicitud.getTorneoEquipoActual().getEquipo().getNombreEquipo():solicitud.getTorneoEquipoActual().getNombrePersonalizado();
+            String equipoSolicita = solicitud.getTorneoEquipoSolicita().getNombrePersonalizado()==null?
+                    solicitud.getTorneoEquipoSolicita().getEquipo().getNombreEquipo():solicitud.getTorneoEquipoSolicita().getNombrePersonalizado();
+            String fechaSolicitud = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+            agregarFilaTabla(table, "JUGADOR:", nombreJugador, fontNegrita, fontDatos);
+            agregarFilaTabla(table, "DOCUMENTO:", documentoJugador, fontNegrita, fontDatos);
+            agregarFilaTabla(table, "TORNEO:", nombreTorneo, fontNegrita, fontDatos);
+            agregarFilaTabla(table, "EQUIPO ORIGEN:", equipoActual, fontNegrita, fontDatos);
+            agregarFilaTabla(table, "EQUIPO DESTINO:", equipoSolicita, fontNegrita, fontDatos);
+            agregarFilaTabla(table, "FECHA SOLICITUD:", fechaSolicitud, fontNegrita, fontDatos);
 
             document.add(table);
             document.add(new Paragraph("\n"));
@@ -108,7 +116,9 @@ public class PdfGeneratorService {
             cuerpo.setAlignment(Element.ALIGN_JUSTIFIED);
             cuerpo.add(new Phrase("ASUNTO/MOTIVO: ", fontNegrita));
             cuerpo.add(new Phrase(solicitud.getAsunto() + "\n\n", fontDatos));
-            cuerpo.add(new Phrase("El jugador abajo firmante manifiesta su voluntad de desvincularse del equipo de origen para integrarse al equipo de destino, aceptando los reglamentos internos del torneo y confirmando que no posee deudas pendientes o sanciones vigentes que impidan este movimiento.", fontDatos));
+            cuerpo.add(new Phrase("El jugador abajo firmante manifiesta su voluntad de desvincularse del equipo "+(new Phrase(equipoActual, fontNegrita))+
+                    " para integrarse al equipo "+(new Phrase(equipoSolicita, fontNegrita))+", aceptando los reglamentos internos del torneo y confirmando que " +
+                    "no posee deudas pendientes o sanciones vigentes que impidan este movimiento.", fontDatos));
             document.add(cuerpo);
 
             // --- SECCIÓN DE FIRMAS ---

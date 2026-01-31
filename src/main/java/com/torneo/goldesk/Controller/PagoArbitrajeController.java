@@ -20,7 +20,7 @@ public class PagoArbitrajeController {
 
     // Registrar un nuevo pago (POST)
     @PostMapping("/registrar")
-    public ResponseEntity<String> registrarPago(@RequestBody PagoArbitrajeCreateDTO dto) {
+    public ResponseEntity<?> registrarPago(@RequestBody PagoArbitrajeCreateDTO dto) {
         try {
             pagoArbitrajeService.registrarPagoArbitraje(dto);
             return new ResponseEntity<>("Pago de arbitraje registrado exitosamente", HttpStatus.CREATED);
@@ -31,7 +31,7 @@ public class PagoArbitrajeController {
 
     // Actualizar monto u observación (PUT o PATCH)
     @PutMapping("/actualizar")
-    public ResponseEntity<String> actualizarPago(@RequestBody PagoArbitrajeUpdateDTO dto) {
+    public ResponseEntity<?> actualizarPago(@RequestBody PagoArbitrajeUpdateDTO dto) {
         try {
             pagoArbitrajeService.actualizarPagoArbitraje(dto);
             return ResponseEntity.ok("Registro de pago actualizado correctamente");

@@ -1,12 +1,15 @@
 package com.torneo.goldesk.Controller;
 
 import com.torneo.goldesk.Service.JugadorService;
+import com.torneo.goldesk.dto.actores.jugador.EstadisticasJugadorDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCarnetDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCreateDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorUpdateDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/jugadores")
@@ -16,6 +19,20 @@ public class JugadorController {
 
     public JugadorController(JugadorService jugadorService) {
         this.jugadorService = jugadorService;
+    }
+
+    @GetMapping("/estadisticas/equipo/{idTorneoEquipo}")
+    public ResponseEntity<?> getEstadisticasPorEquipo(@PathVariable Integer idTorneoEquipo){
+        List<EstadisticasJugadorDTO> estadisticas = jugadorService.obtenerEstadisticasPorEquipo(idTorneoEquipo);
+        if (estadisticas.isEmpty()) {
+            return ResponseEntity.noContent().build(); // Devuelve 204 si no hay datos
+        }
+        return ResponseEntity.ok(estadisticas);
+    }
+
+    @GetMapping("/listar-x-equipo/{idTorneoEquipo}")
+    public ResponseEntity<?> buscarJugadoresPorEquipo(@PathVariable Integer idTorneoEquipo){
+        return ResponseEntity.ok(jugadorService.buscarJugadoresPorEquipo(idTorneoEquipo));
     }
 
     @PatchMapping("/traspasar-delegado/{idTorneoEquipo}/{cedulaNuevo}")
@@ -34,7 +51,7 @@ public class JugadorController {
     }
 
     @PatchMapping("/dar-de-baja/{idInscripcion}")
-    public ResponseEntity<String> darDeBaja(@PathVariable Integer idInscripcion) {
+    public ResponseEntity<?> darDeBaja(@PathVariable Integer idInscripcion) {
         try {
             String respuesta = jugadorService.eliminarJugadorDeEquipo(idInscripcion);
             return ResponseEntity.ok(respuesta);
@@ -58,8 +75,8 @@ public class JugadorController {
         return ResponseEntity.ok(jugadorService.obtenerDatosCarnet(idInscripcion));
     }
 
-    @PostMapping("inscribir/{idTorneoEquipo}")
-    public ResponseEntity<String> inscribirJugador(
+    @PostMapping("/inscribir/{idTorneoEquipo}")
+    public ResponseEntity<?> inscribirJugador(
             @RequestBody JugadorCreateDTO dto,
             @PathVariable Integer idTorneoEquipo) {
         try {
@@ -74,4 +91,8 @@ public class JugadorController {
         }
     }
 
+    @GetMapping("/buscar_info_jugador/{cc}")
+    public ResponseEntity<?> buscarInfoJugador(@PathVariable String cc){
+        return ResponseEntity.ok(jugadorService.buscarInfoJugador(cc));
+    }
 }

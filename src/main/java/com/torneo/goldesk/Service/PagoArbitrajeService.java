@@ -12,6 +12,8 @@ import com.torneo.goldesk.dto.registroPagos.arbitraje.PagoArbitrajeUpdateDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class PagoArbitrajeService {
 
@@ -38,6 +40,7 @@ public class PagoArbitrajeService {
         pagoArbitraje.setPartido(partido);
         pagoArbitraje.setTorneoEquipo(equipo);
         pagoArbitraje.setMonto(dto.getMonto());
+        pagoArbitraje.setFechaPago(LocalDateTime.now());
         pagoArbitraje.setObservacion(dto.getObservacion());
 
         pagoArbitrajeRepository.save(pagoArbitraje);

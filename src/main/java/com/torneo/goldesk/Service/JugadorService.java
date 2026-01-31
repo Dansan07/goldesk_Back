@@ -1,20 +1,18 @@
 package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.Jugador;
-import com.torneo.goldesk.Entity.Torneo;
 import com.torneo.goldesk.Entity.TorneoEquipo;
 import com.torneo.goldesk.Entity.TorneoEquipoJugador;
+import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.JugadorRepositoty;
 import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoRepository;
-import com.torneo.goldesk.dto.actores.jugador.JugadorCarnetDTO;
-import com.torneo.goldesk.dto.actores.jugador.JugadorCreateDTO;
-import com.torneo.goldesk.dto.actores.jugador.JugadorUpdateDTO;
-import jakarta.transaction.Transactional;
+import com.torneo.goldesk.dto.actores.jugador.*;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class JugadorService {
@@ -29,6 +27,25 @@ public class JugadorService {
         this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
         this.torneoEquipoRepository = torneoEquipoRepository;
     }
+    @Transactional(readOnly = true)
+    public List<EstadisticasJugadorDTO> obtenerEstadisticasPorEquipo(Integer idTorneoEquipo){
+        return torneoEquipoJugadorRepository.obtenerEstadisticasPorEquipo(idTorneoEquipo);
+    }
+
+    @Transactional(readOnly = true)
+    public List<JugadorResponseDTO> buscarJugadoresPorEquipo(Integer idTorneoEquipo){
+        List<TorneoEquipoJugador> jugadores = torneoEquipoJugadorRepository
+                .findByTorneoEquipo_IdTorneoEquipoAndActivoTrue(idTorneoEquipo);
+
+        if (jugadores.isEmpty()) return Collections.emptyList();
+
+        return jugadores
+                .stream()
+                .map(this::convertToDto)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public String traspasarDelegacion(Integer idTorneoEquipo, String cedulaNuevoDelegado) {
         // 1. Obtener todos los jugadores de ese equipo en ese torneo
@@ -85,8 +102,8 @@ public class JugadorService {
     }
 
     @Transactional
-    public String eliminarJugadorDeEquipo(Integer idInscripcion) {
-        TorneoEquipoJugador relacion = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(idInscripcion)
+    public String eliminarJugadorDeEquipo(Integer idTorneoEquipoJugador) {
+        TorneoEquipoJugador relacion = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(idTorneoEquipoJugador)
                 .orElseThrow(() -> new RuntimeException("No se encontró la inscripción del jugador."));
 
         if (!relacion.isActivo()) {
@@ -100,8 +117,8 @@ public class JugadorService {
     }
 
     @Transactional
-    public String recuperarJugadorEnEquipo(Integer idInscripcion) {
-        TorneoEquipoJugador relacion = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(idInscripcion)
+    public String recuperarJugadorEnEquipo(Integer idTorneoEquipoJugador) {
+        TorneoEquipoJugador relacion = torneoEquipoJugadorRepository.findByIdTorneoEquipoJugador(idTorneoEquipoJugador)
                 .orElseThrow(() -> new RuntimeException("No se encontró la inscripción del jugador."));
 
         relacion.setActivo(true); // Restaurar
@@ -144,10 +161,20 @@ public class JugadorService {
         if (jugadorOpt.isPresent()) {
             // El jugador ya existe, lo usamos directamente
             jugador = jugadorOpt.get();
+
+//            jugador.setNombreJugador(dto.getNombre());
+//            jugador.setApellidosJugador(dto.getApellidos());
+//            jugador.setTelJugador(dto.getTelefono());
+//            jugador.setEmailJugador(dto.getEmail().isEmpty()?
+//                    jugadorOpt.get().getEmailJugador():dto.getEmail());
+//            jugador.setUrlFotoJugador(dto.getUrlFoto().isEmpty()?
+//                    jugadorOpt.get().getUrlFotoJugador():dto.getUrlFoto());
+//            jugador.setEsDelegado(dto.isEsDelegado());
+//            jugador = jugadorRepositoty.save(jugador);
         } else {
             // El jugador NO existe, verificamos si el DTO trae los datos para crearlo
             if (dto.getNombre() == null || dto.getNombre().isEmpty()) {
-                throw new RuntimeException("Jugador no encontrado. Por favor, complete el formulario de registro.");
+                throw new RuntimeException("Por favor, complete el formulario de registro.");
             }
 
             jugador = new Jugador();
@@ -157,7 +184,7 @@ public class JugadorService {
             jugador.setEmailJugador(dto.getEmail());
             jugador.setTelJugador(dto.getTelefono());
             jugador.setUrlFotoJugador(dto.getUrlFoto());
-            jugador.setEsDelegado(false);
+            jugador.setEsDelegado(dto.isEsDelegado());
             jugador = jugadorRepositoty.save(jugador);
         }
 
@@ -180,7 +207,46 @@ public class JugadorService {
         return "Inscripción exitosa: " + jugador.getNombreJugador() + " ha sido añadido a " + te.getEquipo().getNombreEquipo();
     }
 
+    @Transactional
+    public JugadorResponseDTO buscarInfoJugador(String cedula){
+        Jugador j = jugadorRepositoty.findByCedulaJug(cedula)
+                .orElseThrow(()-> new ResourceNotFoundException("Jugador aún no resgitrado"));
 
+        TorneoEquipoJugador tej = torneoEquipoJugadorRepository
+                .findByJugador_IdJugadorAndActivoTrue(j.getIdJugador())
+                .orElse(null);
 
+        Integer idTorneoEquipoJugador = tej != null?
+                tej.getIdTorneoEquipoJugador():null;
 
+        return new JugadorResponseDTO(
+                j.getCedulaJug(),
+                j.getNombreJugador(),
+                j.getApellidosJugador(),
+                j.getTelJugador(),
+                j.getEmailJugador(),
+                j.getIdJugador(),
+                idTorneoEquipoJugador,
+                j.getUrlFotoJugador(),
+                j.isEsDelegado()
+        );
+
+    }
+
+    private JugadorResponseDTO convertToDto(TorneoEquipoJugador tej) {
+        // Obtenemos la referencia al jugador para evitar múltiples llamadas al objeto padre
+        Jugador j = tej.getJugador();
+        if (j == null) return null;
+
+        return new JugadorResponseDTO(
+                j.getCedulaJug(),
+                j.getNombreJugador(),
+                j.getApellidosJugador(),
+                j.getTelJugador(),
+                j.getEmailJugador(),
+                j.getIdJugador(),
+                j.getUrlFotoJugador(),
+                j.isEsDelegado()
+        );
+    }
 }
