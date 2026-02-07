@@ -131,7 +131,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void actualizarPasswordOrg(String email) {
+    public void recuperarPasswordOrg(String email) {
         Organizador organizador= organizadorRepository.findByEmailOrg(email)
                 .orElseThrow(()->new RuntimeException("El correo electrónico no existe"));
 
@@ -143,7 +143,7 @@ public class AuthService {
         organizador.setPassHashOrg(passwordHacheada);
         organizadorRepository.save(organizador);
 
-        messageService.actualizarPasswordOrg(
+        messageService.recuperarPasswordOrg(
                 organizadorService.convertirADTO(organizador),
                 passwordTemporal);
     }

@@ -3,6 +3,7 @@ package com.torneo.goldesk.Service;
 import com.torneo.goldesk.Entity.Jugador;
 import com.torneo.goldesk.Entity.TorneoEquipo;
 import com.torneo.goldesk.Entity.TorneoEquipoJugador;
+import com.torneo.goldesk.Exception.PreconditionFailed;
 import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.JugadorRepositoty;
 import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
@@ -143,7 +144,8 @@ public class JugadorService {
                 j.getEmailJugador(),
                 j.getUrlFotoJugador(),
                 j.isEsDelegado(),
-                te.getEquipo().getNombreEquipo(),
+                te.getNombrePersonalizado()==null?
+                te.getEquipo().getNombreEquipo():te.getNombrePersonalizado(),
                 te.getTorneo().getNombreTorneo(),
                 te.getTorneo().getCategoriaTorneo(),
                 tej.getIdTorneoEquipoJugador(),
@@ -161,16 +163,6 @@ public class JugadorService {
         if (jugadorOpt.isPresent()) {
             // El jugador ya existe, lo usamos directamente
             jugador = jugadorOpt.get();
-
-//            jugador.setNombreJugador(dto.getNombre());
-//            jugador.setApellidosJugador(dto.getApellidos());
-//            jugador.setTelJugador(dto.getTelefono());
-//            jugador.setEmailJugador(dto.getEmail().isEmpty()?
-//                    jugadorOpt.get().getEmailJugador():dto.getEmail());
-//            jugador.setUrlFotoJugador(dto.getUrlFoto().isEmpty()?
-//                    jugadorOpt.get().getUrlFotoJugador():dto.getUrlFoto());
-//            jugador.setEsDelegado(dto.isEsDelegado());
-//            jugador = jugadorRepositoty.save(jugador);
         } else {
             // El jugador NO existe, verificamos si el DTO trae los datos para crearlo
             if (dto.getNombre() == null || dto.getNombre().isEmpty()) {
@@ -194,7 +186,7 @@ public class JugadorService {
 
         // 3. Validar que no juegue ya en ESTE torneo (tu regla de oro)
         if (torneoEquipoJugadorRepository.existsByJugadorAndTorneo(jugador.getCedulaJug(), te.getTorneo().getIdTorneo())) {
-            throw new RuntimeException("El jugador ya está inscrito en este torneo con otro equipo.");
+            throw new PreconditionFailed("El jugador ya está inscrito en este torneo con otro equipo.");
         }
 
         // 4. Crear la relación final

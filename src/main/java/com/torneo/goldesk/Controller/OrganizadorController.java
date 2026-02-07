@@ -3,10 +3,8 @@ package com.torneo.goldesk.Controller;
 import com.torneo.goldesk.Service.OrganizadorService;
 import com.torneo.goldesk.Service.PanelOrganizadorService;
 import com.torneo.goldesk.dto.PanelOrganizador.VistaTorneoEquiposDTO;
+import com.torneo.goldesk.dto.actores.organizador.*;
 import com.torneo.goldesk.dto.login.LoginRequestDTO;
-import com.torneo.goldesk.dto.actores.organizador.OrganizadorCreateDTO;
-import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
-import com.torneo.goldesk.dto.actores.organizador.OrganizadorUpdateDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +25,16 @@ public class OrganizadorController {
     public OrganizadorController(OrganizadorService organizadorService, PanelOrganizadorService panelOrganizadorService) {
         this.organizadorService = organizadorService;
         this.panelOrganizadorService = panelOrganizadorService;
+    }
+
+    @PatchMapping("/actualizar-password")
+    public ResponseEntity<?> actualizarPasswordOrg(@RequestBody ActualizaPassOrgDTO dto){
+        try {
+            organizadorService.actualizarPasswordOrg(dto);
+            return ResponseEntity.ok("Contraseña Actualizada Correctamente");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     //busca los torneos que le perteneces a su respectivo organizador
@@ -74,11 +82,15 @@ public class OrganizadorController {
     }
 
     //actualiza la información del organizador
-    @PutMapping
+    @PutMapping("/actualizar-datos")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
-    public ResponseEntity<String> actualizarOrganizador(@RequestBody OrganizadorUpdateDTO dto){
-        organizadorService.actualizarOrganizador(dto);
-        return ResponseEntity.ok("Datos de Organizador actualizados Correctamente");
+    public ResponseEntity<?> actualizarOrganizador(@RequestBody ActualizaDatosOrgDTO dto){
+        try {
+            organizadorService.actualizarOrganizador(dto);
+            return ResponseEntity.ok("Datos de Organizador actualizados Correctamente");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     //crea un nuevo Organizador

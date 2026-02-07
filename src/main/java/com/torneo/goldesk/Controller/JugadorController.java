@@ -1,11 +1,13 @@
 package com.torneo.goldesk.Controller;
 
+import com.torneo.goldesk.Exception.PreconditionFailed;
 import com.torneo.goldesk.Service.JugadorService;
 import com.torneo.goldesk.dto.actores.jugador.EstadisticasJugadorDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCarnetDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorCreateDTO;
 import com.torneo.goldesk.dto.actores.jugador.JugadorUpdateDTO;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,6 +85,10 @@ public class JugadorController {
             // Llamamos al servicio que tiene la lógica de "buscar o crear"
             String mensaje = jugadorService.inscribirJugadorOptimizado(dto, idTorneoEquipo);
             return new ResponseEntity<>(mensaje, HttpStatus.CREATED);
+        }catch (PreconditionFailed e){
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(e.getMessage());
         } catch (RuntimeException e) {
             // Si el jugador ya está en el torneo o no existe la relación, devolvemos el error
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

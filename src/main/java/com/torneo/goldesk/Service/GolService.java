@@ -10,6 +10,7 @@ import com.torneo.goldesk.Repository.ParticipacionJugadorRepository;
 import com.torneo.goldesk.Repository.PartidoRepository;
 import com.torneo.goldesk.dto.gol.GolCreateDTO;
 import com.torneo.goldesk.dto.gol.GolResponseDTO;
+import com.torneo.goldesk.dto.tablaGoleadores.TablaGoleadoresDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -89,5 +90,13 @@ public class GolService {
     public List<GolResponseDTO> listarGolesPorParticipacion(Integer idParticipacion) {
         // Optimización: Consulta directa por el ID de la tabla de hechos
         return golRepository.findByParticipacionJugador_IdParticipacion(idParticipacion);
+    }
+
+    public List<TablaGoleadoresDTO> obtenerTablaGoleadoresPorTorneo (Long idTorneo){
+        List<TablaGoleadoresDTO> tablaGoleadores = golRepository.obtenerTablaGoleadores(idTorneo);
+        if (tablaGoleadores.isEmpty()){
+            throw new ResourceNotFoundException("Aún no hay registro de goles");
+        }
+        return tablaGoleadores;
     }
 }

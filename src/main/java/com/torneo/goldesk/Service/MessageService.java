@@ -1,7 +1,6 @@
 package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class MessageService {
         mailSender.send(message);
     }
 
-    public void actualizarPasswordOrg(OrganizadorResponseDTO dto, String password){
+    public void recuperarPasswordOrg(OrganizadorResponseDTO dto, String password){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(dto.getEmail());
         message.setSubject("Goldesk - Recuperación de Contraseña");

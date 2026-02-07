@@ -47,8 +47,9 @@ public class TraspasoController {
         try {
             byte[] pdfContent = traspasoService.crearSolicitud(dto);
 
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
+            // Si todo sale bien, devolvemos el PDF
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"Solicitud_Traspaso.pdf\"")
                     .body(pdfContent);
 
@@ -56,6 +57,7 @@ public class TraspasoController {
             // Si el Service lanza la excepción de "Ya existe una solicitud",
             // aquí la capturamos para enviar un mensaje claro al Front.
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.TEXT_PLAIN)
                     .body(e.getMessage());
         }
     }
@@ -80,23 +82,35 @@ public class TraspasoController {
     // 3. Obtener solicitudes por estado (Para la vista del Organizador)
     @GetMapping("/mis-solicitudes")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
-    public ResponseEntity<List<TraspasoResponseDTO>> listarMisSolicitudes(
+    public ResponseEntity<?> listarMisSolicitudes(
             @RequestParam String estado) {
-        return ResponseEntity.ok(traspasoService.listarPorEstadoYOrganizador(estado));
+        try {
+            return ResponseEntity.ok(traspasoService.listarPorEstadoYOrganizador(estado));
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // 4. Finalizar el proceso (Aprobar)
     @PatchMapping("/aprobar/{idTraspaso}")
     @PreAuthorize("hasRole('ROLE_ORGANIZADOR')")
     public ResponseEntity<?> aprobarSolicitud(@PathVariable Integer idTraspaso) {
-        return ResponseEntity.ok(traspasoService.aprobarSolicitud(idTraspaso));
+        try {
+            return ResponseEntity.ok(traspasoService.aprobarSolicitud(idTraspaso));
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    // 4. Finalizar el proceso (Aprobar)
+    // 4. Finalizar el proceso (rechazar)
     @PatchMapping("/rechazar")
     @PreAuthorize("hasRole('ROLE_ORGANIZADOR')")
     public ResponseEntity<?> rechazarSolicitud(@RequestBody TraspasoUpdateDTO dto) {
-        return ResponseEntity.ok(traspasoService.rechazarSolicitud(dto));
+        try {
+            return ResponseEntity.ok(traspasoService.rechazarSolicitud(dto));
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }

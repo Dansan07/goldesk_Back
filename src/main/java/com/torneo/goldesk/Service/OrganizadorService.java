@@ -2,12 +2,12 @@ package com.torneo.goldesk.Service;
 
 import com.torneo.goldesk.Entity.Organizador;
 import com.torneo.goldesk.Entity.Rol;
+import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
 import com.torneo.goldesk.Repository.RolRepository;
 import com.torneo.goldesk.Service.Authenticator.JwtService;
-import com.torneo.goldesk.dto.actores.organizador.OrganizadorCreateDTO;
-import com.torneo.goldesk.dto.actores.organizador.OrganizadorResponseDTO;
-import com.torneo.goldesk.dto.actores.organizador.OrganizadorUpdateDTO;
+import com.torneo.goldesk.dto.actores.organizador.*;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +28,21 @@ public class OrganizadorService {
         this.messageService = messageService;
     }
 
+    @Transactional
+    public void actualizarPasswordOrg(ActualizaPassOrgDTO dto) {
+        Organizador organizador= organizadorRepository.findByEmailOrg(dto.getEmail())
+                .orElseThrow(()->new RuntimeException("El correo electrónico no existe"));
+
+        //encripta y guarda passwordTemporal
+        if (dto.getPass().length()<8){
+            throw new RuntimeException("La contraseña debe tener almenos 8 carácteres");
+        }
+        String pass=dto.getPass();
+        String passwordHacheada = passwordEncoder.encode(pass);
+        organizador.setPassHashOrg(passwordHacheada);
+        organizadorRepository.save(organizador);
+    }
+
     public void activarOrganizador(String cedula) {
         Organizador organizador = organizadorRepository.findById(cedula)
                 .orElseThrow(()-> new RuntimeException("Organizador no encontrado"));
@@ -46,17 +61,14 @@ public class OrganizadorService {
         organizadorRepository.save(organizador);
     }
 
-    public void actualizarOrganizador(OrganizadorUpdateDTO dto) {
-        Organizador organizador = organizadorRepository.findById(dto.getCedula())
+    public void actualizarOrganizador(ActualizaDatosOrgDTO dto) {
+        Organizador organizador = organizadorRepository.findByEmailOrg(dto.getCedula())
                 .orElseThrow(()-> new RuntimeException("Organizador no encontrado"));
 
         organizador.setTelefonoOrg(dto.getTelefono());
         organizador.setNombreOrg(dto.getNombre());
         organizador.setApellidoOrg(dto.getApellidos());
         organizador.setEmailOrg(dto.getEmail());
-        organizador.setCodigoInvitado(dto.getCodigoInvitado());
-        organizador.setPassHashOrg(dto.getPassHashOrg());
-        organizador.setActivo(dto.getActivo());
 
         organizadorRepository.save(organizador);
     }
@@ -101,7 +113,7 @@ public class OrganizadorService {
                     passwordTemporal // Enviamos la clave SIN encriptar
             );
         } catch (Exception e) {
-            // Loguear el error pero permitir que el proceso continúe
+            // Loguear el error, pero permitir que el proceso continúe
             System.err.println("Error al enviar el correo: " + e.getMessage());
         }
         return convertirADTO(organizadorguardado);
@@ -127,6 +139,7 @@ public class OrganizadorService {
                 .map(this::convertirADTO)
                 .toList();
     }
+
     public String generarCodigoInvitado(int longitud) {
         String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         java.security.SecureRandom random = new java.security.SecureRandom();
@@ -138,6 +151,7 @@ public class OrganizadorService {
         }
         return sb.toString();
     }
+
     public OrganizadorResponseDTO convertirADTO(Organizador org) {
         return new OrganizadorResponseDTO(
                 org.getCedulaOrg(),
@@ -147,7 +161,8 @@ public class OrganizadorService {
                 org.getEmailOrg(),
                 org.getCodigoInvitado(),
                 org.getRol().getTipoRol(),
-                org.getActivo()
+                org.getActivo(),
+                org.getUrlLogoOrg()
         );
     }
 }

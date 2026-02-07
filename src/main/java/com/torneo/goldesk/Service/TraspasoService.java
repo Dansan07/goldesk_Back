@@ -3,6 +3,7 @@ package com.torneo.goldesk.Service;
 import com.torneo.goldesk.Entity.TorneoEquipo;
 import com.torneo.goldesk.Entity.TorneoEquipoJugador;
 import com.torneo.goldesk.Entity.Traspaso;
+import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoRepository;
@@ -39,7 +40,7 @@ public class TraspasoService {
     }
 
     @Transactional
-    public TraspasoResponseDTO aprobarSolicitud(Integer idTraspaso) {
+    public String aprobarSolicitud(Integer idTraspaso) {
         // 1. Obtener la solicitud con todos sus datos
         Traspaso solicitud = traspasoRepository.findById(idTraspaso)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
@@ -86,7 +87,7 @@ public class TraspasoService {
         torneoEquipoJugadorRepository.save(nuevoRegistro);
 
         // 4. Actualizar la solicitud de traspaso
-        solicitud.setEstado("APROBADO");
+        solicitud.setEstado("APROBADA");
         solicitud.setFechaRespuesta(LocalDateTime.now());
         traspasoRepository.save(solicitud);
 
@@ -95,17 +96,7 @@ public class TraspasoService {
         String nombreEquipoDestino =solicitud.getTorneoEquipoSolicita().getNombrePersonalizado()==null?
                 solicitud.getTorneoEquipoSolicita().getEquipo().getNombreEquipo(): solicitud.getTorneoEquipoSolicita().getNombrePersonalizado();
 
-        return new TraspasoResponseDTO(
-                idTraspaso,
-                solicitud.getJugador().getNombreJugador(),
-                solicitud.getJugador().getCedulaJug(),
-                nombreEquipoOrigen,
-                nombreEquipoDestino,
-                solicitud.getAsunto(),
-                solicitud.getEstado(),
-                solicitud.getFechaRespuesta(),
-                solicitud.getFechaRespuesta()
-        );
+        return "Su Solicitud ha sido aprobada exitosamente";
     }
 
     @Transactional
@@ -131,12 +122,18 @@ public class TraspasoService {
 
         List<Traspaso> solicitudes= traspasoRepository.findByEstadoAndOrganizador_CedulaOrg(estado, cedulaOrg);
 
+        if (solicitudes.isEmpty()){
+            throw new ResourceNotFoundException("No hay solicitudes en estado: "+estado);
+        }
+
         return solicitudes.stream().map(s -> new TraspasoResponseDTO(
                 s.getIdTraspaso(),
                 s.getJugador().getNombreJugador() + " " + s.getJugador().getApellidosJugador(),
                 s.getJugador().getCedulaJug(),
-                s.getTorneoEquipoActual().getEquipo().getNombreEquipo(),
-                s.getTorneoEquipoSolicita().getEquipo().getNombreEquipo(),
+                s.getTorneoEquipoActual().getNombrePersonalizado()==null?
+                        s.getTorneoEquipoActual().getEquipo().getNombreEquipo():s.getTorneoEquipoActual().getNombrePersonalizado(),
+                s.getTorneoEquipoSolicita().getNombrePersonalizado()==null?
+                        s.getTorneoEquipoSolicita().getEquipo().getNombreEquipo():s.getTorneoEquipoSolicita().getNombrePersonalizado(),
                 s.getAsunto(),
                 s.getEstado(),
                 s.getFechaSolicitud(),
@@ -179,9 +176,9 @@ public class TraspasoService {
                 .orElseThrow(()-> new RuntimeException("El equipo de destino no existe."));
 
         // Validación extra: ¿El equipo nuevo pertenece al mismo torneo que el actual?
-        if (!equipoSolicita.getTorneo().getIdTorneo().equals(inscripcionActual.getTorneoEquipo().getTorneo().getIdTorneo())) {
-            throw new RuntimeException("El equipo de destino debe pertenecer al mismo torneo actual. No es necesario Realizar Traspaso.");
-        }
+//        if (!equipoSolicita.getTorneo().getIdTorneo().equals(inscripcionActual.getTorneoEquipo().getTorneo().getIdTorneo())) {
+//            throw new RuntimeException("El equipo de origen no pertenece al mismo torneo actual. No es necesario Realizar Traspaso.");
+//        }
 
         //valida que no se esté haciendo traspaso al mismo equipo.
         String nombreEquipo= inscripcionActual.getTorneoEquipo().getNombrePersonalizado().isEmpty()?
@@ -221,7 +218,7 @@ public class TraspasoService {
             throw new RuntimeException("No está autorizado para rechazar esta solicitud");
         }
 
-        solicitud.setEstado("RECHAZADO");
+        solicitud.setEstado(dto.getEstado());
         solicitud.setObservaciones(dto.getObservaciones());
         solicitud.setFechaRespuesta(LocalDateTime.now());
 

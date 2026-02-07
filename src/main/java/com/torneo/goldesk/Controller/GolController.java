@@ -41,4 +41,9 @@ public class GolController {
                     .body("Error al eliminar el gol: " + e.getMessage());
         }
     }
+
+    @GetMapping("/tabla-goleadores/{idTorneo}")
+    public ResponseEntity<?> obtenerTablaGoleadoresPorTorneo(@PathVariable Long idTorneo){
+        return ResponseEntity.ok(golService.obtenerTablaGoleadoresPorTorneo(idTorneo));
+    }
 }

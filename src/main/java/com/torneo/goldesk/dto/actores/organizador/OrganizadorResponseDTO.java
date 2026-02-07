@@ -1,19 +1,47 @@
 package com.torneo.goldesk.dto.actores.organizador;
 
-import com.torneo.goldesk.dto.actores.PersonaBaseDTO;
+public class OrganizadorResponseDTO{
 
-public class OrganizadorResponseDTO extends PersonaBaseDTO {
-
+    private String cedula;
+    private String nombre;
+    private String apellidos;
+    private String telefono;
+    private String email;
     private String codigoInvitado;
     private String rol;
     private boolean activo;
-    private String passwordTemporal;
+    private String urlLogoOrg;
 
-    public OrganizadorResponseDTO(String cedula, String nombre, String apellidos, String telefono, String email, String codigoInvitado, String idRol, boolean activo) {
-        super(cedula, nombre, apellidos, telefono, email);
+    public OrganizadorResponseDTO(String cedula, String nombre, String apellidos, String telefono, String email, String codigoInvitado, String rol, boolean activo, String urlLogoOrg) {
+        this.cedula = cedula;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.telefono = telefono;
+        this.email = email;
         this.codigoInvitado = codigoInvitado;
-        this.rol = idRol;
+        this.rol = rol;
         this.activo = activo;
+        this.urlLogoOrg = urlLogoOrg;
+    }
+
+    public String getCedula() {
+        return cedula;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getCodigoInvitado() {
@@ -24,7 +52,11 @@ public class OrganizadorResponseDTO extends PersonaBaseDTO {
         return rol;
     }
 
-    public boolean getActivo() {
+    public boolean isActivo() {
         return activo;
+    }
+
+    public String getUrlLogoOrg() {
+        return urlLogoOrg;
     }
 }

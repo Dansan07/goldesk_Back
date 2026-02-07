@@ -32,7 +32,7 @@ public class AuthController {
         }
     }
 
-    //valida el inicio de sesión del organizador
+    //Valida el inicio de sesión del organizador
     @PostMapping("/login-organizador")
     public ResponseEntity<?> loginOrganizador(@Valid @RequestBody LoginRequestDTO loginDto) {
         try {
@@ -45,7 +45,7 @@ public class AuthController {
 
     @PatchMapping("/actualizar-password/{email}")
     public ResponseEntity<String> actualizarPasswordOrg(@PathVariable String email){
-        authService.actualizarPasswordOrg(email);
+        authService.recuperarPasswordOrg(email);
         return ResponseEntity.ok("Contraseña Actualizada Correctamente");
     }
 }

@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth-> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/organizadores/**").hasAnyRole("ADMIN", "ORGANIZADOR")
-                        .requestMatchers("/api/jugadores/listar-x-equipo/{idTorneoEquipo}").permitAll()
+                        .requestMatchers("/api/goles/tabla-goleadores/**").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(
                         jwtAuthenticationFilter(),
