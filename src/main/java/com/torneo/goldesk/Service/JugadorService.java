@@ -169,6 +169,11 @@ public class JugadorService {
                 throw new RuntimeException("Por favor, complete el formulario de registro.");
             }
 
+            String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9-]+\\.[A-Za-z]{2,}$";
+            if (dto.getEmail() == null || !dto.getEmail().matches(EMAIL_REGEX)){
+                throw new RuntimeException("Formato de Email no válido");
+            }
+
             jugador = new Jugador();
             jugador.setCedulaJug(dto.getCedula());
             jugador.setNombreJugador(dto.getNombre());

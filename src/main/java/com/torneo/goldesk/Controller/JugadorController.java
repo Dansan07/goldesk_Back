@@ -86,11 +86,12 @@ public class JugadorController {
             String mensaje = jugadorService.inscribirJugadorOptimizado(dto, idTorneoEquipo);
             return new ResponseEntity<>(mensaje, HttpStatus.CREATED);
         }catch (PreconditionFailed e){
+            // Si el jugador ya está en el torneo con otro equipo
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED)
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(e.getMessage());
         } catch (RuntimeException e) {
-            // Si el jugador ya está en el torneo o no existe la relación, devolvemos el error
+            //si no existe la relación, devolvemos el error
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>("Error interno en el servidor", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -39,13 +39,13 @@ public class TorneoController {
         return ResponseEntity.ok("Torneo Eliminado Correctamente");
     }
 
-    @PutMapping
+    @PutMapping("/actualizar_torneo")
     public ResponseEntity<String> actualizarTorneo(@RequestBody TorneoUpdateDTO dto){
         torneoService.actualizarTorneo(dto);
         return ResponseEntity.ok("Torneo actualizado Correctamente");
     }
 
-    @PostMapping
+    @PostMapping("/guardar_torneo")
     public ResponseEntity<TorneoResponseDTO> crearTorneo(@RequestBody TorneoCreateDTO dto){
         TorneoResponseDTO torneoCreado = torneoService.crearTorneo(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(torneoCreado);
