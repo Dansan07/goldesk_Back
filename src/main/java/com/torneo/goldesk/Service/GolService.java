@@ -93,9 +93,10 @@ public class GolService {
     }
 
     public List<TablaGoleadoresDTO> obtenerTablaGoleadoresPorTorneo (Long idTorneo){
-        if (golRepository.obtenerTablaGoleadores(idTorneo).isEmpty()){
+        List<TablaGoleadoresDTO> tablaGoleadores = golRepository.obtenerTablaGoleadores(idTorneo);
+        if (tablaGoleadores.isEmpty()){
             throw new RuntimeException("Aún no hay registro de goles");
         }
-        return golRepository.obtenerTablaGoleadores(idTorneo);
+        return tablaGoleadores;
     }
 }
