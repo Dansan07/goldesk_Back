@@ -29,11 +29,8 @@ public class TorneoService {
         if (cedulaOrg == null || cedulaOrg.trim().isEmpty()) {
             throw new IllegalArgumentException("La cédula del organizador no se encontró.");
         }
-        return torneoRepository.findDistinctCategoriaTorneoByOrganizador_CedulaOrg(cedulaOrg)
-                .stream()
-                .filter(Objects::nonNull)
-                .map(Object::toString)
-                .collect(Collectors.toList());
+        return torneoRepository
+                .findCategorias(cedulaOrg);
     }
 
     public TorneoResponseDTO obtenerTorneoUnico(Integer idTorneo){
