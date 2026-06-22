@@ -23,6 +23,13 @@ public class TorneoService {
         this.organizadorRepository = organizadorRepository;
     }
 
+    public List<String> buscarCategoriasExistentes(String cedulaOrg){
+        if (cedulaOrg == null || cedulaOrg.trim().isEmpty()) {
+            throw new IllegalArgumentException("La cédula del organizador no se encontró.");
+        }
+        return torneoRepository.findDistinctCategoriaTorneoByOrganizador_CedulaOrg(cedulaOrg);
+    }
+
     public TorneoResponseDTO obtenerTorneoUnico(Integer idTorneo){
         Torneo torneo = torneoRepository.findById(idTorneo)
                 .orElseThrow(() -> new ResourceNotFoundException("Torneo no encontrado"));

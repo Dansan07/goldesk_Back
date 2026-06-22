@@ -14,5 +14,8 @@ public interface TorneoRepository extends JpaRepository<Torneo, Integer> {
     // Busca torneos de un organizador, pero solo los que el torneo esté activo
     List<Torneo> findByOrganizador_CedulaOrgAndActivoTrue(String cedulaOrg);
 
+    // Spring interpreta "FindDistinct" como SELECT DISTINCT
+    List<String> findDistinctCategoriaTorneoByOrganizador_CedulaOrg(String cedulaOrganizador);
+
     Optional<Torneo> findByIdTorneo(Integer idTorneo);
 }

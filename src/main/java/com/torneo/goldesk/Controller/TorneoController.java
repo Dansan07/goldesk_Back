@@ -20,6 +20,11 @@ public class TorneoController {
         this.torneoService = torneoService;
     }
 
+    @GetMapping("/categorias/{cedulaOrg}")
+    public ResponseEntity<?> buscarCategorias(@PathVariable String cedulaOrg){
+        return ResponseEntity.ok(torneoService.buscarCategoriasExistentes(cedulaOrg));
+    }
+
     @GetMapping("/{idTorneo}")
     public ResponseEntity<?> obtenerTorneoUnico(@PathVariable Integer idTorneo){
         TorneoResponseDTO torneo = torneoService.obtenerTorneoUnico(idTorneo);
