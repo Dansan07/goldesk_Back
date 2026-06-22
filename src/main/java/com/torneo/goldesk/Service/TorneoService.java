@@ -11,6 +11,8 @@ import com.torneo.goldesk.dto.torneo.TorneoUpdateDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TorneoService {
@@ -27,7 +29,11 @@ public class TorneoService {
         if (cedulaOrg == null || cedulaOrg.trim().isEmpty()) {
             throw new IllegalArgumentException("La cédula del organizador no se encontró.");
         }
-        return torneoRepository.findDistinctCategoriaTorneoByOrganizador_CedulaOrg(cedulaOrg);
+        return torneoRepository.findDistinctCategoriaTorneoByOrganizador_CedulaOrg(cedulaOrg)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(Object::toString)
+                .collect(Collectors.toList());
     }
 
     public TorneoResponseDTO obtenerTorneoUnico(Integer idTorneo){
