@@ -38,6 +38,24 @@ public class OrganizadorController {
     }
 
     //busca los torneos que le perteneces a su respectivo organizador
+    @GetMapping("/{cedula}/torneos_activos")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
+    public ResponseEntity<?> obtenerTorneosActivosDelOrganizador(@PathVariable String cedula) {
+        // Extraer la cédula del contexto de seguridad (la que viene en el JWT)
+        String cedulaToken =
+                (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (!cedulaToken.equals(cedula)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("No tienes Permiso para acceder a los datos de otro organizador");
+        }
+
+        List<Map<String, Object>> torneos = panelOrganizadorService.listarTorneosPorOrganizadorActivo(cedula);
+
+        // Si no tiene torneos, enviamos 204 (No Content), de lo contrario 200 (OK)
+        return torneos.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(torneos);
+    }
+
     @GetMapping("/{cedula}/torneos")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ORGANIZADOR')")
     public ResponseEntity<?> obtenerTorneosDelOrganizador(@PathVariable String cedula) {

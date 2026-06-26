@@ -41,13 +41,25 @@ public class PanelOrganizadorService {
                 }).toList();
     }
 
-    public List<Map<String, Object>> listarTorneosPorOrganizador(String cedulaOrg) {
+    public List<Map<String, Object>> listarTorneosPorOrganizadorActivo(String cedulaOrg) {
         return torneoRepository.findByOrganizador_CedulaOrgAndActivoTrue(cedulaOrg)
                 .stream()
                 .map(t -> Map.<String, Object>of(
                         "idTorneo", t.getIdTorneo(),
                         "nombreTorneo", t.getNombreTorneo(),
                         "partidosInicial", t.getPartidosInicial()
+                ))
+                .toList();
+    }
+
+    public List<Map<String, Object>> listarTorneosPorOrganizador(String cedulaOrg) {
+        return torneoRepository.findByOrganizador_CedulaOrg(cedulaOrg)
+                .stream()
+                .map(t -> Map.<String, Object>of(
+                        "idTorneo", t.getIdTorneo(),
+                        "nombreTorneo", t.getNombreTorneo(),
+                        "partidosInicial", t.getPartidosInicial(),
+                        "activo", t.getActivo()
                 ))
                 .toList();
     }
