@@ -61,6 +61,11 @@ public class TorneoService {
 
     public void actualizarTorneo(TorneoUpdateDTO dto){
 
+        if (torneoRepository.existsByOrganizador_CedulaOrgAndNombreTorneoAndIdTorneoNot(
+                dto.getCedulaOrganizador(), dto.getNombreTorneo(), dto.getIdTorneo())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya hay otro torneo con ese nombre");
+        }
+
         Torneo torneo = torneoRepository.findById(dto.getIdTorneo())
                 .orElseThrow(()-> new RuntimeException("Torneo no encontrado"));
 
@@ -79,12 +84,12 @@ public class TorneoService {
 
     public void crearTorneo(TorneoCreateDTO dto){
 
+        if (torneoRepository.existsByOrganizador_CedulaOrgAndNombreTorneo(dto.getCedulaOrganizador(),dto.getNombreTorneo())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya tienes un torneo registrado con ese nombre");
+        }
+
         Organizador organizador = organizadorRepository.findById(dto.getCedulaOrganizador())
                 .orElseThrow(()-> new RuntimeException("Organizador no Encontrado"));
-
-        if (torneoRepository.existsByOrganizador_CedulaOrgAndNombreTorneo(dto.getCedulaOrganizador(),dto.getNombreTorneo())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya tienes un torneo resgitrado con ese nombre");
-        }
 
         Torneo torneo = new Torneo();
         torneo.setNombreTorneo(dto.getNombreTorneo());

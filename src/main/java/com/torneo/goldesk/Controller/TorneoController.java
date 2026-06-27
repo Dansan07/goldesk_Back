@@ -49,7 +49,6 @@ public class TorneoController {
     public ResponseEntity<?> actualizarTorneo(@RequestBody TorneoUpdateDTO dto){
         torneoService.actualizarTorneo(dto);
         Map<String, String> response = new HashMap<>();
-        response.clear();
         response.put("mensaje","Torneo actualizado Correctamente");
         return ResponseEntity.ok(response);
     }
@@ -58,7 +57,6 @@ public class TorneoController {
     public ResponseEntity<?> crearTorneo(@RequestBody TorneoCreateDTO dto){
         torneoService.crearTorneo(dto);
         Map<String, String> response = new HashMap<>();
-        response.clear();
         response.put("mensaje", "Nuevo Torneo Creado con éxito.");
         return ResponseEntity.ok(response);
     }
