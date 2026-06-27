@@ -8,7 +8,9 @@ import com.torneo.goldesk.Repository.TorneoRepository;
 import com.torneo.goldesk.dto.torneo.TorneoCreateDTO;
 import com.torneo.goldesk.dto.torneo.TorneoResponseDTO;
 import com.torneo.goldesk.dto.torneo.TorneoUpdateDTO;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +81,10 @@ public class TorneoService {
 
         Organizador organizador = organizadorRepository.findById(dto.getCedulaOrganizador())
                 .orElseThrow(()-> new RuntimeException("Organizador no Encontrado"));
+
+        if (torneoRepository.existsByOrganizador_CedulaOrgAndNombreTorneo(dto.getCedulaOrganizador(),dto.getNombreTorneo())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya tienes un torneo resgitrado con ese nombre");
+        }
 
         Torneo torneo = new Torneo();
         torneo.setNombreTorneo(dto.getNombreTorneo());

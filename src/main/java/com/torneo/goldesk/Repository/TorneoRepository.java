@@ -27,4 +27,6 @@ public interface TorneoRepository extends JpaRepository<Torneo, Integer> {
     List<String> findCategorias(@Param("cedulaOrg") String cedulaOrg);
 
     Optional<Torneo> findByIdTorneo(Integer idTorneo);
+
+    Boolean existsByOrganizador_CedulaOrgAndNombreTorneo(String cedulaOrg, String nombreTorneo);
 }
