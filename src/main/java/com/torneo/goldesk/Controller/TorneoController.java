@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/torneos")
@@ -44,15 +46,21 @@ public class TorneoController {
     }
 
     @PutMapping("/actualizar_torneo")
-    public ResponseEntity<String> actualizarTorneo(@RequestBody TorneoUpdateDTO dto){
+    public ResponseEntity<?> actualizarTorneo(@RequestBody TorneoUpdateDTO dto){
         torneoService.actualizarTorneo(dto);
-        return ResponseEntity.ok("Torneo actualizado Correctamente");
+        Map<String, String> response = new HashMap<>();
+        response.clear();
+        response.put("mensaje","Torneo actualizado Correctamente");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/guardar_torneo")
-    public ResponseEntity<TorneoResponseDTO> crearTorneo(@RequestBody TorneoCreateDTO dto){
-        TorneoResponseDTO torneoCreado = torneoService.crearTorneo(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(torneoCreado);
+    public ResponseEntity<?> crearTorneo(@RequestBody TorneoCreateDTO dto){
+        torneoService.crearTorneo(dto);
+        Map<String, String> response = new HashMap<>();
+        response.clear();
+        response.put("mensaje", "Nuevo Torneo Creado con éxito.");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping

@@ -75,7 +75,7 @@ public class TorneoService {
         torneoRepository.save(torneo);
     }
 
-    public TorneoResponseDTO crearTorneo(TorneoCreateDTO dto){
+    public void crearTorneo(TorneoCreateDTO dto){
 
         Organizador organizador = organizadorRepository.findById(dto.getCedulaOrganizador())
                 .orElseThrow(()-> new RuntimeException("Organizador no Encontrado"));
@@ -93,9 +93,7 @@ public class TorneoService {
         torneo.setOrganizador(organizador);
         torneo.setCategoriaTorneo(dto.getCategoriaTorneo());
 
-        Torneo torneoGuardado = torneoRepository.save(torneo);
-
-        return convertirADTO(torneoGuardado);
+        torneoRepository.save(torneo);
     }
 
     public List<TorneoResponseDTO> obtenerTodos(){
