@@ -3,7 +3,6 @@ package com.torneo.goldesk.dto.torneo;
 public class TorneoUpdateDTO {
 
     private Integer idTorneo;
-    private String cedulaOrganizador;
     private String nombreTorneo;
     private double valorAmarilla;
     private double valorAzul;
@@ -12,9 +11,20 @@ public class TorneoUpdateDTO {
     private double valorInscripcion;
     private double valorBalonPetos;
     private Integer partidosInicial;
-    private Boolean activo;
     private String categoriaTorneo;
 
+    public TorneoUpdateDTO(Integer idTorneo, String nombreTorneo, double valorAmarilla, double valorAzul, double valorRoja, double valorArbitraje, double valorInscripcion, double valorBalonPetos, Integer partidosInicial, String categoriaTorneo) {
+        this.idTorneo = idTorneo;
+        this.nombreTorneo = nombreTorneo;
+        this.valorAmarilla = valorAmarilla;
+        this.valorAzul = valorAzul;
+        this.valorRoja = valorRoja;
+        this.valorArbitraje = valorArbitraje;
+        this.valorInscripcion = valorInscripcion;
+        this.valorBalonPetos = valorBalonPetos;
+        this.partidosInicial = partidosInicial;
+        this.categoriaTorneo = categoriaTorneo;
+    }
 
     public String getCategoriaTorneo() {
         return categoriaTorneo;
@@ -30,14 +40,6 @@ public class TorneoUpdateDTO {
 
     public void setIdTorneo(Integer idTorneo) {
         this.idTorneo = idTorneo;
-    }
-
-    public String getCedulaOrganizador() {
-        return cedulaOrganizador;
-    }
-
-    public void setCedulaOrganizador(String cedulaOrganizador) {
-        this.cedulaOrganizador = cedulaOrganizador;
     }
 
     public String getNombreTorneo() {
@@ -104,11 +106,4 @@ public class TorneoUpdateDTO {
         this.partidosInicial = partidosInicial;
     }
 
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
 }

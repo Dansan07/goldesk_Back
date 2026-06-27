@@ -39,7 +39,6 @@ public class TorneoController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> eliminarTorneo(@PathVariable Integer id){
-
         torneoService.eliminarTorneo(id);
         return ResponseEntity.ok("Torneo Eliminado Correctamente");
     }

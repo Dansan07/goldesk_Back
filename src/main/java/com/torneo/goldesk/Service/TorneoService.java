@@ -63,7 +63,14 @@ public class TorneoService {
                 .orElseThrow(()-> new RuntimeException("Torneo no encontrado"));
 
         torneo.setNombreTorneo(dto.getNombreTorneo());
-        torneo.setActivo(dto.getActivo());
+        torneo.setValorAmarilla(dto.getValorAmarilla());
+        torneo.setValorAzul(dto.getValorAzul());
+        torneo.setValorRoja(dto.getValorRoja());
+        torneo.setValorArbitraje(dto.getValorArbitraje());
+        torneo.setValorInscripcion(dto.getValorInscripcion());
+        torneo.setValorBalonPetos(dto.getValorBalonPetos());
+        torneo.setPartidosInicial(dto.getPartidosInicial());
+        torneo.setCategoriaTorneo(dto.getCategoriaTorneo());
 
         torneoRepository.save(torneo);
     }
