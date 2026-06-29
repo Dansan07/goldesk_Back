@@ -61,9 +61,8 @@ public class TorneoService {
 
     public void actualizarTorneo(TorneoUpdateDTO dto){
 
-        if (torneoRepository.existsByOrganizador_CedulaOrgAndNombreTorneoAndIdTorneoNot(
-                dto.getCedulaOrganizador(), dto.getNombreTorneo(), dto.getIdTorneo())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya hay otro torneo con ese nombre");
+        if (torneoRepository.existsByOrganizador_CedulaOrgAndNombreTorneo(dto.getCedulaOrganizador(),dto.getNombreTorneo())){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ya tienes un torneo registrado con ese nombre");
         }
 
         Torneo torneo = torneoRepository.findById(dto.getIdTorneo())

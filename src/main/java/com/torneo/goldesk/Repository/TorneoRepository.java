@@ -29,5 +29,4 @@ public interface TorneoRepository extends JpaRepository<Torneo, Integer> {
     Optional<Torneo> findByIdTorneo(Integer idTorneo);
 
     Boolean existsByOrganizador_CedulaOrgAndNombreTorneo(String cedulaOrg, String nombreTorneo);
-    Boolean existsByOrganizador_CedulaOrgAndNombreTorneoAndIdTorneoNot(String cedulaOrg, String nombreTorneo, Integer idTorneo);
 }
