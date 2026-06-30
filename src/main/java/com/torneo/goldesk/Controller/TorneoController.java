@@ -34,15 +34,19 @@ public class TorneoController {
     }
 
     @PutMapping("/recuperar/{id}")
-    public ResponseEntity<String> recuperarTorneo(@PathVariable Integer id){
+    public ResponseEntity<?> recuperarTorneo(@PathVariable Integer id){
         torneoService.recuperarTorneo(id);
-        return ResponseEntity.ok("Torneo Restaurado Exitosamente");
+        Map<String, String> map = new HashMap<>();
+        map.put("message","Torneo Restaurado Exitosamente" );
+        return ResponseEntity.ok(map);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> eliminarTorneo(@PathVariable Integer id){
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<?> eliminarTorneo(@PathVariable Integer id){
         torneoService.eliminarTorneo(id);
-        return ResponseEntity.ok("Torneo Eliminado Correctamente");
+        Map<String, String> map = new HashMap<>();
+        map.put("message", "Torneo Eliminado Correctamente");
+        return ResponseEntity.ok(map);
     }
 
     @PutMapping("/actualizar_torneo")

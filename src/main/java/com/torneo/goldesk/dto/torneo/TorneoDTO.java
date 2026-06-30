@@ -31,8 +31,9 @@ public class TorneoDTO {
     }
 
     //constructor para TorneoUpdate
-    public TorneoDTO(Integer idTorneo, String nombreTorneo, double valorAmarilla, double valorAzul, double valorRoja, double valorArbitraje, double valorInscripcion, double valorBalonPetos, Integer partidosInicial, String categoriaTorneo) {
+    public TorneoDTO(Integer idTorneo, String cedulaOrganizador, String nombreTorneo, double valorAmarilla, double valorAzul, double valorRoja, double valorArbitraje, double valorInscripcion, double valorBalonPetos, Integer partidosInicial, String categoriaTorneo) {
         this.idTorneo = idTorneo;
+        this.cedulaOrganizador = cedulaOrganizador;
         this.nombreTorneo = nombreTorneo;
         this.valorAmarilla = valorAmarilla;
         this.valorAzul = valorAzul;
