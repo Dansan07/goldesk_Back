@@ -5,7 +5,7 @@ import com.torneo.goldesk.Entity.TorneoEquipo;
 import com.torneo.goldesk.Entity.TorneoEquipoJugador;
 import com.torneo.goldesk.Exception.PreconditionFailed;
 import com.torneo.goldesk.Exception.ResourceNotFoundException;
-import com.torneo.goldesk.Repository.JugadorRepositoty;
+import com.torneo.goldesk.Repository.JugadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoJugadorRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoRepository;
 import com.torneo.goldesk.dto.actores.jugador.*;
@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class JugadorService {
 
-    private final JugadorRepositoty jugadorRepositoty;
+    private final JugadorRepository jugadorRepository;
     private final TorneoEquipoJugadorRepository torneoEquipoJugadorRepository;
     private final TorneoEquipoRepository torneoEquipoRepository;
 
 
-    public JugadorService(JugadorRepositoty jugadorRepositoty, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository, TorneoEquipoRepository torneoEquipoRepository) {
-        this.jugadorRepositoty = jugadorRepositoty;
+    public JugadorService(JugadorRepository jugadorRepository, TorneoEquipoJugadorRepository torneoEquipoJugadorRepository, TorneoEquipoRepository torneoEquipoRepository) {
+        this.jugadorRepository = jugadorRepository;
         this.torneoEquipoJugadorRepository = torneoEquipoJugadorRepository;
         this.torneoEquipoRepository = torneoEquipoRepository;
     }
@@ -72,7 +72,7 @@ public class JugadorService {
                 // Esto asegura que solo quede un delegado activo.
                 jugador.setEsDelegado(false);
             }
-            jugadorRepositoty.save(jugador);
+            jugadorRepository.save(jugador);
         }
 
         if (!encontrado) {
@@ -88,7 +88,7 @@ public class JugadorService {
 
     @Transactional
     public String actualizarDatosJugador(String cedula, JugadorUpdateDTO dto) {
-        Jugador jugador = jugadorRepositoty.findByCedulaJug(cedula)
+        Jugador jugador = jugadorRepository.findByCedulaJug(cedula)
                 .orElseThrow(() -> new RuntimeException("Jugador no encontrado"));
 
         // Actualizamos solo lo permitido
@@ -98,7 +98,7 @@ public class JugadorService {
         jugador.setEmailJugador(dto.getEmail());
         jugador.setUrlFotoJugador(dto.getUrlFoto());
 
-        jugadorRepositoty.save(jugador);
+        jugadorRepository.save(jugador);
         return "Perfil de " + jugador.getNombreJugador() + " actualizado correctamente.";
     }
 
@@ -157,7 +157,7 @@ public class JugadorService {
     public String inscribirJugadorOptimizado(JugadorCreateDTO dto, Integer idTorneoEquipo) {
 
         // 1. Intentar buscar al jugador
-        Optional<Jugador> jugadorOpt = jugadorRepositoty.findByCedulaJug(dto.getCedula());
+        Optional<Jugador> jugadorOpt = jugadorRepository.findByCedulaJug(dto.getCedula());
         Jugador jugador;
 
         if (jugadorOpt.isPresent()) {
@@ -182,7 +182,7 @@ public class JugadorService {
             jugador.setTelJugador(dto.getTelefono());
             jugador.setUrlFotoJugador(dto.getUrlFoto());
             jugador.setEsDelegado(dto.isEsDelegado());
-            jugador = jugadorRepositoty.save(jugador);
+            jugador = jugadorRepository.save(jugador);
         }
 
         // 2. Obtener la relación Torneo-Equipo
@@ -206,7 +206,7 @@ public class JugadorService {
 
     @Transactional
     public JugadorResponseDTO buscarInfoJugador(String cedula){
-        Jugador j = jugadorRepositoty.findByCedulaJug(cedula)
+        Jugador j = jugadorRepository.findByCedulaJug(cedula)
                 .orElseThrow(()-> new ResourceNotFoundException("Jugador aún no resgitrado"));
 
         TorneoEquipoJugador tej = torneoEquipoJugadorRepository

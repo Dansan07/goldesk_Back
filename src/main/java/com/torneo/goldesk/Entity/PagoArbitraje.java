@@ -24,7 +24,7 @@ public class PagoArbitraje {
     @Column(name = "monto")
     private Double monto; // numeric en Postgres
 
-    @Column(name = "fecha_pago")
+    @Column(name = "fecha_pago", insertable = false)
     private LocalDateTime fechaPago; // timestamp without time zone
 
     @Column(name = "observacion")

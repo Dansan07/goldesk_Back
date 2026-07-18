@@ -1,7 +1,6 @@
 package com.torneo.goldesk.Repository;
 
 import com.torneo.goldesk.Entity.ParticipacionJugador;
-import com.torneo.goldesk.Repository.Projection.JugadorPlanillaProyeccion;
 import com.torneo.goldesk.dto.planillaDigital.JugadorPlanillaDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,5 +37,5 @@ public interface ParticipacionJugadorRepository extends JpaRepository<Participac
                     CASE WHEN p.dorsal ~ '^[0-9]+$' THEN CAST(p.dorsal AS INTEGER) ELSE 999 END,
                     p.dorsal ASC
         """, nativeQuery = true)
-    List<JugadorPlanillaProyeccion> findJugadoresPlanilla(Integer idPartido, Integer idTorneoEquipo);
+    List<JugadorPlanillaDTO.vista> findJugadoresPlanilla(Integer idPartido, Integer idTorneoEquipo);
 }

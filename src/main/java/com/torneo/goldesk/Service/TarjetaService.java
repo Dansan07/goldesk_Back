@@ -7,6 +7,7 @@ import com.torneo.goldesk.Repository.TarjetaRepository;
 import com.torneo.goldesk.Repository.TorneoRepository;
 import com.torneo.goldesk.dto.tarjeta.TarjetaCreateDTO;
 import com.torneo.goldesk.dto.tarjeta.TarjetaResponseDTO;
+import com.torneo.goldesk.dto.registroPagos.tarjetas.TarjetaTorneoResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,13 @@ public class TarjetaService {
         this.torneoRepository = torneoRepository;
     }
 
+    public List<TarjetaTorneoResponse> obtenerTarjetasTorneo(Integer idTorneo, String estadoPago){
+        return tarjetaRepository.obtenerTarjetasTorneo(idTorneo,estadoPago)
+                .stream()
+                .map(TarjetaTorneoResponse::new)
+                .toList();
+    }
+
     //metodo para listar tarjetas de un torneo específico
     public List<TarjetaResponseDTO> obtenerHistorialTarjetas(Integer idTorneo){
         return tarjetaRepository.findByParticipacionJugador_TorneoEquipoJugador_TorneoEquipo_Torneo_IdTorneo(idTorneo)
@@ -32,7 +40,6 @@ public class TarjetaService {
                 .map(this::convertirADTO)
                 .toList();
     }
-
 
     // Metodo para listar las tarjetas de un jugador en un partido
     public List<TarjetaResponseDTO> obtenerTarjetasPorParticipacion(Integer idParticipacion, String tipoTarjeta) {
