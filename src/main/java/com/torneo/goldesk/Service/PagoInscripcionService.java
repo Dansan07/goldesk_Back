@@ -4,13 +4,14 @@ import com.torneo.goldesk.Entity.PagoInscripcion;
 import com.torneo.goldesk.Entity.TorneoEquipo;
 import com.torneo.goldesk.Repository.PagoInscripcionRepository;
 import com.torneo.goldesk.Repository.TorneoEquipoRepository;
-import com.torneo.goldesk.dto.registroPagos.inscripcion.AbonoDetalleDTO;
-import com.torneo.goldesk.dto.registroPagos.inscripcion.PagoInscripcionCreateDTO;
-import com.torneo.goldesk.dto.registroPagos.inscripcion.EstadoCuentaInscripcionDTO;
+import com.torneo.goldesk.dto.registroPagos.inscripcion.AbonoDetalleInscripcionDTO;
+import com.torneo.goldesk.dto.registroPagos.inscripcion.InscripcionTorneoResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PagoInscripcionService {
@@ -23,43 +24,37 @@ public class PagoInscripcionService {
         this.torneoEquipoRepository = torneoEquipoRepository;
     }
 
+    public List<InscripcionTorneoResponse> obtenerListadoInscripcion(Integer idTorneo, String estadoPago){
+        return pagoInscripcionRepository.obtenerInscripcioneTorneo(idTorneo, estadoPago)
+                .stream()
+                .map(InscripcionTorneoResponse::new)
+                .toList();
+    }
+
     @Transactional
-    public void registrarPagoInscripcion(PagoInscripcionCreateDTO dto) {
-        TorneoEquipo equipo = torneoEquipoRepository.findByIdTorneoEquipo(dto.getIdTorneoEquipo())
+    public void registrarPagoInscripcion(Map<String, Object> dto) {
+        TorneoEquipo equipo = torneoEquipoRepository.findByIdTorneoEquipo((Integer) dto.get("idTorneoEquipo"))
                 .orElseThrow(() -> new RuntimeException("No se encontró el equipo en el torneo"));
 
         PagoInscripcion pago = new PagoInscripcion();
         pago.setTorneoEquipo(equipo);
-        pago.setMonto(dto.getMonto());
+        pago.setMonto((Double) dto.get("monto"));
 
         pagoInscripcionRepository.save(pago);
     }
 
-    public EstadoCuentaInscripcionDTO obtenerEstadoCuenta(Integer idTorneoEquipo){
+    @Transactional
+    public List<AbonoDetalleInscripcionDTO> obtenerEstadoCuenta(Integer idTorneoEquipo){
         // 1. Obtener el equipo y el valor del torneo
-        TorneoEquipo equipo = torneoEquipoRepository.findById(idTorneoEquipo)
+        torneoEquipoRepository.findById(idTorneoEquipo)
                 .orElseThrow(() -> new RuntimeException("Equipo no encontrado en el torneo"));
 
-        Double valorTotalTorneo = equipo.getTorneo().getValorInscripcion();
-
-        List<PagoInscripcion> pagos = pagoInscripcionRepository.findByTorneoEquipoIdTorneoEquipo(idTorneoEquipo);
-
-        List<AbonoDetalleDTO> historial = pagos.stream()
-                .map(p -> new AbonoDetalleDTO(
+        return pagoInscripcionRepository.findByTorneoEquipoIdTorneoEquipo(idTorneoEquipo)
+                .stream()
+                .map(p -> new AbonoDetalleInscripcionDTO(
                         p.getIdPagoInscripcion(),
                         p.getMonto(),
                         p.getFechaPago()
                 )).toList();
-
-        Double totalAbonado = historial.stream().mapToDouble(AbonoDetalleDTO::getMonto).sum();
-        Double saldoPendiente = (valorTotalTorneo - totalAbonado);
-
-        return new EstadoCuentaInscripcionDTO(
-                valorTotalTorneo,
-                totalAbonado,
-                saldoPendiente,
-                historial
-
-        );
     }
 }

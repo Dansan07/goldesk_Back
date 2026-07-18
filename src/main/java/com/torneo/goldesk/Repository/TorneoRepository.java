@@ -1,6 +1,7 @@
 package com.torneo.goldesk.Repository;
 
 import com.torneo.goldesk.Entity.Torneo;
+import com.torneo.goldesk.dto.torneo.ResumenInscripcion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +30,7 @@ public interface TorneoRepository extends JpaRepository<Torneo, Integer> {
     Optional<Torneo> findByIdTorneo(Integer idTorneo);
 
     Boolean existsByOrganizador_CedulaOrgAndNombreTorneo(String cedulaOrg, String nombreTorneo);
+
+    @Query(value = "SELECT * FROM obtener_resumen_inscripcion_torneo(:idTorneo)", nativeQuery = true)
+    ResumenInscripcion.Vista obtenerResumenInscripcionTorneo(@Param("idTorneo") Integer idTorneo);
 }

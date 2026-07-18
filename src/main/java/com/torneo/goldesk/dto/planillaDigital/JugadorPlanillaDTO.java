@@ -2,6 +2,16 @@ package com.torneo.goldesk.dto.planillaDigital;
 
 public class JugadorPlanillaDTO {
 
+    public interface vista {
+        Integer getIdReferencia(); // Debe coincidir con el alias en el SQL
+        String getDorsal();
+        String getNombreJugador();
+        Integer getCantGoles();
+        Integer getCantAmarillas();
+        Integer getCantAzules();
+        Integer getCantRojas();
+    }
+
     // Si el partido no ha iniciado, este será el id_torneo_equipos_jugadores (idTEJ)
     // Si el partido ya inició, este será el id_participacion
     private Integer idReferencia;

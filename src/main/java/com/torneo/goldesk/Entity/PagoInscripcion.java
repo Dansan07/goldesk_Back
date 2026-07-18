@@ -20,7 +20,7 @@ public class PagoInscripcion {
     @Column(name = "monto")
     private Double monto;
 
-    @Column(name = "fecha_pago")
+    @Column(name = "fecha_pago", insertable = false, updatable = false)
     private LocalDateTime fechaPago;
 
     //constructor

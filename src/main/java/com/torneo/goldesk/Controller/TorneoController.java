@@ -1,6 +1,7 @@
 package com.torneo.goldesk.Controller;
 
 import com.torneo.goldesk.Service.TorneoService;
+import com.torneo.goldesk.dto.torneo.ResumenInscripcion;
 import com.torneo.goldesk.dto.torneo.TorneoCreateDTO;
 import com.torneo.goldesk.dto.torneo.TorneoResponseDTO;
 import com.torneo.goldesk.dto.torneo.TorneoUpdateDTO;
@@ -20,6 +21,11 @@ public class TorneoController {
 
     public TorneoController(TorneoService torneoService) {
         this.torneoService = torneoService;
+    }
+
+    @GetMapping("/resumen-inscripcion/{idTorneo}")
+    public ResponseEntity<ResumenInscripcion> resumenInscripcionTorneo(@PathVariable Integer idTorneo){
+        return ResponseEntity.ok(torneoService.obtenerResumenInscripcionTorneo(idTorneo));
     }
 
     @GetMapping("/categorias/{cedulaOrg}")

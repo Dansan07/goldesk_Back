@@ -2,25 +2,25 @@ package com.torneo.goldesk.dto.registroPagos.inscripcion;
 
 import java.time.LocalDateTime;
 
-public class AbonoDetalleDTO {
+public class AbonoDetalleInscripcionDTO {
 
-    private Integer idAbonoInscripcion;
+    private Integer idPagoInscripcion;
     private Double monto;
     private LocalDateTime fecha;
 
 
-    public AbonoDetalleDTO(Integer idAbonoInscripcion, Double monto, LocalDateTime fecha) {
-        this.idAbonoInscripcion = idAbonoInscripcion;
+    public AbonoDetalleInscripcionDTO(Integer idPagoInscripcion, Double monto, LocalDateTime fecha) {
+        this.idPagoInscripcion = idPagoInscripcion;
         this.monto = monto;
         this.fecha = fecha;
     }
 
-    public Integer getIdAbonoInscripcion() {
-        return idAbonoInscripcion;
+    public Integer getIdPagoInscripcion() {
+        return idPagoInscripcion;
     }
 
-    public void setIdAbonoInscripcion(Integer idAbonoInscripcion) {
-        this.idAbonoInscripcion = idAbonoInscripcion;
+    public void setIdPagoInscripcion(Integer idPagoInscripcion) {
+        this.idPagoInscripcion = idPagoInscripcion;
     }
 
     public Double getMonto() {

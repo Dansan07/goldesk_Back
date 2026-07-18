@@ -5,6 +5,7 @@ import com.torneo.goldesk.Entity.Torneo;
 import com.torneo.goldesk.Exception.ResourceNotFoundException;
 import com.torneo.goldesk.Repository.OrganizadorRepository;
 import com.torneo.goldesk.Repository.TorneoRepository;
+import com.torneo.goldesk.dto.torneo.ResumenInscripcion;
 import com.torneo.goldesk.dto.torneo.TorneoCreateDTO;
 import com.torneo.goldesk.dto.torneo.TorneoResponseDTO;
 import com.torneo.goldesk.dto.torneo.TorneoUpdateDTO;
@@ -25,6 +26,11 @@ public class TorneoService {
     public TorneoService(TorneoRepository torneoRepository, OrganizadorRepository organizadorRepository) {
         this.torneoRepository = torneoRepository;
         this.organizadorRepository = organizadorRepository;
+    }
+
+    public ResumenInscripcion obtenerResumenInscripcionTorneo(Integer idTorneo){
+        ResumenInscripcion.Vista vista = torneoRepository.obtenerResumenInscripcionTorneo(idTorneo);
+        return new ResumenInscripcion(vista);
     }
 
     public List<String> buscarCategoriasExistentes(String cedulaOrg){
